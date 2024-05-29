@@ -3,18 +3,18 @@ import { SigmaScript } from "./sigmascript";
 const demos: { [key: string]: string } = {
     "hello-world": `print "Hello world!";`,
     "structures": `
-    print "loop from 1 to 10";
-    x = 0;
-    while x < 10 {
+print "loop from 1 to 10";
+x = 0;
+while x < 10 {
     x = x + 1;
     print x;
-    }
+}
     
-    if x = 10 {
+if x = 10 {
     print "x = 10";
-    } else {
+} else {
     print "x ≠ 10";
-    }
+}
 `,
     "fibonacci": `
 fn fib(n) {
