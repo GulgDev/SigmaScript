@@ -1,0 +1,3 @@
+use example;
+
+helloWorld();
