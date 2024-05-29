@@ -1,4 +1,5 @@
 # SigmaScript
+![Logo](dist/logo.png)
 Programming language made for sigma males.
 [Demo](https://gulgdev.github.io/SigmaScript/demo/)
 
