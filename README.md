@@ -5,7 +5,7 @@ Programming language made for sigma males.
 ## Getting started
 To get started simply add SigmaScript loader to your web page:
 ```html
-<script src="https://raw.githubusercontent.com/GulgDev/SigmaScript/demo/sigmascript.js"></script>
+<script src="https://raw.githubusercontent.com/GulgDev/SigmaScript/gh-pages/sigmascript.js"></script>
 ```
 Then, create a SigmaScript file (or write it directly in script tag like JavaScript code):
 ```html
