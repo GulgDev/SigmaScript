@@ -1,4 +1,4 @@
-import { SSFunction, SigmaScript } from "../sigmascript";
+import { SSFunction, Scope, SigmaScript } from "../sigmascript";
 import { ASTElement } from "../../parser";
 
 export class SigmaScriptLib {
@@ -8,10 +8,10 @@ export class SigmaScriptLib {
         this.program = program;
     }
 
-    use(sigmaScript: SigmaScript, variables: { [key: string]: string }, functions: { [key: string]: SSFunction }) {
-        const scope = sigmaScript.execute(this.program);
-        Object.assign(variables, scope.variables);
-        Object.assign(functions, scope.functions);
+    use(sigmaScript: SigmaScript, scope: Scope) {
+        const libScope = sigmaScript.execute(this.program);
+        Object.assign(scope.variables, libScope.variables);
+        Object.assign(scope.functions, libScope.functions);
     }
 }
 
@@ -24,8 +24,8 @@ export class NativeLib {
         this.functions = functions;
     }
 
-    use(variables: { [key: string]: string }, functions: { [key: string]: SSFunction }) {
-        Object.assign(variables, this.variables);
-        Object.assign(functions, this.functions);
+    use(scope: Scope) {
+        Object.assign(scope.variables, this.variables);
+        Object.assign(scope.functions, this.functions);
     }
 }

@@ -1,4 +1,4 @@
-import { NativeLib } from "./lib";
+import { NativeLib } from ".";
 
 let elementId = -1;
 

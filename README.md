@@ -7,7 +7,7 @@ Programming language made for sigma males.
 ## Getting started
 To get started simply add SigmaScript loader to your web page:
 ```html
-<script src="https://raw.githubusercontent.com/GulgDev/SigmaScript/gh-pages/sigmascript.js"></script>
+<script src="https://raw.githubusercontent.com/GulgDev/SigmaScript/dist/sigmascript.js"></script>
 ```
 Then, create a SigmaScript file (or write it directly in script tag like JavaScript code):
 ```html
@@ -69,6 +69,13 @@ use js;
 
 ...
 ```
+You can also create custom libs using the `lib` directive:
+```
+lib example;
+
+...
+```
+Lib files aren't executed unless they are used in non-lib scripts.
 
 #### JS
 JS lib allows you to access JavaScript functions and objects from SigmaScript. Use `js` function to evaluate JavaScript code from string. Use `js_get` and `js_set` to get/set properties of objects. Use `js_new` and `js_call` to call JavaScript object as a constructor/function. Use `js_call_method` to call a method of given object. There's `js_window` variable to access the `window` object.
@@ -82,8 +89,21 @@ Fn lib allows you to create callbacks. Use `fn` to create a callback from functi
 #### Ref
 Ref lib allows you to create references to objects. Use `ref` to create a reference. Use `ref_get` and `ref_set` to get/set the current value of reference.
 
-### More info
+### SSX
+Did you hear about JSX? Of course you did! Well, I'm glad to introduce you SigmaScriptX! It is way more convenient than just using boring DOM. To use SSX add the SigmaScriptX loader to your page (SSX loader includes SS loader so you don't have to add two different loader scripts):
+```html
+<script src="https://raw.githubusercontent.com/GulgDev/SigmaScript/dist/sigmascriptx.js"></script>
+```
+And now use it in your project:
+```
+use dom;
+
+dom_append(dom_body, <h1>Hello world!</h1>);
+```
+See [this article](ssx.md) to learn more about SSX.
+
+## More info
 Browse the source code if you want to know more about how this project works.
 
-### Bugs
+## Bugs
 This project is mostly a joke but if there's any bugs please feel free to report them on GitHub. Libs can be buggy because I didn't want to debug them properly and make them safe. You clearly shouldn't use this in production.

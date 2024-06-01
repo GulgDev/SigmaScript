@@ -1,5 +1,5 @@
 import { SSFunction } from "../sigmascript";
-import { NativeLib } from "./lib";
+import { NativeLib } from ".";
 
 let funcId = -1;
 

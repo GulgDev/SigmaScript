@@ -1,15 +1,23 @@
 import { ASTElement, Grammar, Parser, inherit } from "../parser";
-import { SigmaScriptLib } from "./lib/lib";
+import { SigmaScriptLib } from "./lib";
 import { domLib } from "./lib/dom";
 import { fnLib } from "./lib/fn";
 import { jsLib } from "./lib/js";
 import { refLib } from "./lib/ref";
 import { grammar } from "./grammar";
 
-export type Scope = {
-    variables: { [key: string]: string },
-    functions: { [key: string]: SSFunction }
+export class Scope {
+    readonly variables: { [key: string]: string } = {};
+    readonly functions: { [key: string]: SSFunction } = {};
+
+    constructor(scope?: Scope) {
+        if (scope) {
+            this.variables = { ...scope.variables };
+            this.functions = { ...scope.functions };
+        }
+    }
 };
+
 export type SSFunction = (args: string[], scope: Scope) => string;
 
 export class SigmaScript {
@@ -21,150 +29,147 @@ export class SigmaScript {
         this.parser = new Parser(inherit(grammar, mergeGrammar));
     }
 
-    protected parseImports(imports: ASTElement) {
-        const variables: { [key: string]: string } = {};
-        const functions: { [key: string]: SSFunction } = {};
+    protected parseImports(imports: ASTElement, scope: Scope) {
         for (const use of imports) {
             const name = use.find("name").value;
-            if (name in this.libs) this.libs[name].use(this, variables, functions);
+            if (name in this.libs) this.libs[name].use(this, scope);
             else
                 switch (name) {
                     case "js":
-                        jsLib.use(variables, functions);
+                        jsLib.use(scope);
                         break;
                     case "dom":
-                        domLib.use(variables, functions);
+                        domLib.use(scope);
                         break;
                     case "ref":
-                        refLib.use(variables, functions);
+                        refLib.use(scope);
                         break;
                     case "fn":
-                        fnLib.use(variables, functions);
+                        fnLib.use(scope);
                         break;
                 }
         }
-        return { variables, functions };
     }
 
     protected parseString(raw: string) {
         return raw.slice(1, -1).replace(/\\\"/g, "\"").replace(/\\\\/g, "\\");
     }
 
-    protected evalExpr(expr: ASTElement, variables: { [key: string]: string }, functions: { [key: string]: SSFunction }): string {
+    protected evalExpr(expr: ASTElement, scope: Scope): string {
         if (expr.name === "expr")
             expr = expr.first;
         switch (expr.name) {
             case "parenthesisexpr":
-                return this.evalExpr(expr.first, variables, functions);
+                return this.evalExpr(expr.first, scope);
             case "name":
-                return variables[expr.value] ?? "unknown";
+                return scope.variables[expr.value] ?? "unknown";
             case "number":
             case "bool":
                 return expr.value;
             case "string":
                 return this.parseString(expr.value);
             case "add": {
-                const a = this.evalExpr(expr.first, variables, functions);
-                const b = this.evalExpr(expr.last, variables, functions);
+                const a = this.evalExpr(expr.first, scope);
+                const b = this.evalExpr(expr.last, scope);
                 const result = Number.parseInt(a) + Number.parseInt(b);
                 return Number.isNaN(result) ? "unknown" : `${result}`;
             }
             case "sub": {
-                const a = this.evalExpr(expr.first, variables, functions);
-                const b = this.evalExpr(expr.last, variables, functions);
+                const a = this.evalExpr(expr.first, scope);
+                const b = this.evalExpr(expr.last, scope);
                 const result = Number.parseInt(a) - Number.parseInt(b);
                 return Number.isNaN(result) ? "unknown" : `${result}`;
             }
             case "mul": {
-                const a = this.evalExpr(expr.first, variables, functions);
-                const b = this.evalExpr(expr.last, variables, functions);
+                const a = this.evalExpr(expr.first, scope);
+                const b = this.evalExpr(expr.last, scope);
                 const result = Number.parseInt(a) * Number.parseInt(b);
                 return Number.isNaN(result) ? "unknown" : `${result}`;
             }
             case "div": {
-                const a = this.evalExpr(expr.first, variables, functions);
-                const b = this.evalExpr(expr.last, variables, functions);
+                const a = this.evalExpr(expr.first, scope);
+                const b = this.evalExpr(expr.last, scope);
                 const result = ~~(Number.parseInt(a) / Number.parseInt(b));
                 return Number.isNaN(result) ? "unknown" : `${result}`;
             }
             case "eq": {
-                const a = this.evalExpr(expr.first, variables, functions);
-                const b = this.evalExpr(expr.last, variables, functions);
+                const a = this.evalExpr(expr.first, scope);
+                const b = this.evalExpr(expr.last, scope);
                 return `${a === b}`;
             }
             case "lt": {
-                const a = Number.parseInt(this.evalExpr(expr.first, variables, functions));
-                const b = Number.parseInt(this.evalExpr(expr.last, variables, functions));
+                const a = Number.parseInt(this.evalExpr(expr.first, scope));
+                const b = Number.parseInt(this.evalExpr(expr.last, scope));
                 if (Number.isNaN(a) || Number.isNaN(b)) return "unknown";
                 return `${a < b}`;
             }
             case "gt": {
-                const a = Number.parseInt(this.evalExpr(expr.first, variables, functions));
-                const b = Number.parseInt(this.evalExpr(expr.last, variables, functions));
+                const a = Number.parseInt(this.evalExpr(expr.first, scope));
+                const b = Number.parseInt(this.evalExpr(expr.last, scope));
                 if (Number.isNaN(a) || Number.isNaN(b)) return "unknown";
                 return `${a > b}`;
             }
             case "le": {
-                const a = Number.parseInt(this.evalExpr(expr.first, variables, functions));
-                const b = Number.parseInt(this.evalExpr(expr.last, variables, functions));
+                const a = Number.parseInt(this.evalExpr(expr.first, scope));
+                const b = Number.parseInt(this.evalExpr(expr.last, scope));
                 if (Number.isNaN(a) || Number.isNaN(b)) return "unknown";
                 return `${a <= b}`;
             }
             case "ge": {
-                const a = Number.parseInt(this.evalExpr(expr.first, variables, functions));
-                const b = Number.parseInt(this.evalExpr(expr.last, variables, functions));
+                const a = Number.parseInt(this.evalExpr(expr.first, scope));
+                const b = Number.parseInt(this.evalExpr(expr.last, scope));
                 if (Number.isNaN(a) || Number.isNaN(b)) return "unknown";
                 return `${a >= b}`;
             }
             case "or": {
-                const a = this.evalExpr(expr.first, variables, functions);
-                const b = this.evalExpr(expr.last, variables, functions);
+                const a = this.evalExpr(expr.first, scope);
+                const b = this.evalExpr(expr.last, scope);
                 return `${a === "true" || b === "true"}`;
             }
             case "and": {
-                const a = this.evalExpr(expr.first, variables, functions);
-                const b = this.evalExpr(expr.last, variables, functions);
+                const a = this.evalExpr(expr.first, scope);
+                const b = this.evalExpr(expr.last, scope);
                 return `${a === "true" && b === "true"}`;
             }
             case "not":
-                return `${this.evalExpr(expr.first, variables, functions) === "true" ? "false" : "true"}`;
+                return `${this.evalExpr(expr.first, scope) === "true" ? "false" : "true"}`;
             case "concat": {
-                const a = this.evalExpr(expr.first, variables, functions);
-                const b = this.evalExpr(expr.last, variables, functions);
+                const a = this.evalExpr(expr.first, scope);
+                const b = this.evalExpr(expr.last, scope);
                 return a + b;
             }
             case "call": {
                 const name = expr.find("name").value;
-                const func = functions[name];
+                const func = scope.functions[name];
                 if (!func) return "unknown";
-                const args = Array.from(expr.find("arglist")).map((arg) => this.evalExpr(arg, variables, functions));
-                return func(args, { variables, functions });
+                const args = Array.from(expr.find("arglist")).map((arg) => this.evalExpr(arg, scope));
+                return func(args, scope);
             }
         }
         return "unknown";
     }
 
-    protected execStatement(statement: ASTElement, variables: { [key: string]: string }, functions: { [key: string]: SSFunction }): string {
+    protected execStatement(statement: ASTElement, scope: Scope): string {
         switch (statement.name) {
             case "assign":
-                variables[statement.find("name").value] = this.evalExpr(statement.find("expr"), variables, functions);
+                scope.variables[statement.find("name").value] = this.evalExpr(statement.find("expr"), scope);
                 break;
             case "if": {
-                const condition = this.evalExpr(statement.find("expr"), variables, functions);
+                const condition = this.evalExpr(statement.find("expr"), scope);
                 let result;
                 if (condition === "true")
-                    result = this.exec(statement.find("body"), variables, functions);
+                    result = this.exec(statement.find("body"), scope);
                 const elseStatement = statement.findChild("else");
                 if (elseStatement && condition === "false")
-                    result = this.exec(elseStatement.find("body"), variables, functions);
+                    result = this.exec(elseStatement.find("body"), scope);
                 if (result) return result;
                 break;
             }
             case "while": {
                 const expr = statement.find("expr");
                 const body = statement.find("body");
-                while (this.evalExpr(expr, variables, functions) === "true") {
-                    const result = this.exec(body, variables, functions);
+                while (this.evalExpr(expr, scope) === "true") {
+                    const result = this.exec(body, scope);
                     if (result) return result;
                 }
                 break;
@@ -172,34 +177,33 @@ export class SigmaScript {
             case "function": {
                 const body = statement.find("body");
                 const params = Array.from(statement.find("paramlist")).map((param) => param.value);
-                functions[statement.find("name").value] = (args: string[]) => {
-                    const localVariables = {...variables};
-                    const localFunctions = {...functions};
+                scope.functions[statement.find("name").value] = (args: string[]) => {
+                    const localScope = this.newScope(scope);
                     let i = 0;
                     for (const param of params) {
                         const arg = args[i];
                         if (!arg) break;
-                        localVariables[param] = arg;
+                        localScope.variables[param] = arg;
                         ++i;
                     }
-                    return this.exec(body, localVariables, localFunctions) ?? "unknown";
+                    return this.exec(body, localScope) ?? "unknown";
                 };
                 break;
             }
             case "print":
-                console.log(this.evalExpr(statement.find("expr"), variables, functions));
+                console.log(this.evalExpr(statement.find("expr"), scope));
                 break;
             case "callstat":
-                this.evalExpr(statement.first, variables, functions);
+                this.evalExpr(statement.first, scope);
                 break;
             case "return":
-                return this.evalExpr(statement.find("expr"), variables, functions);
+                return this.evalExpr(statement.find("expr"), scope);
         }
     }
     
-    protected exec(body: ASTElement, variables: { [key: string]: string }, functions: { [key: string]: SSFunction }): string {
+    protected exec(body: ASTElement, scope: Scope): string {
         for (const { first: statement } of body) {
-            const result = this.execStatement(statement, variables, functions);
+            const result = this.execStatement(statement, scope);
             if (result) return result;
         }
     }
@@ -227,10 +231,15 @@ export class SigmaScript {
             this.loadScript(script);
     }
 
+    protected newScope(parent?: Scope): Scope {
+        return new Scope(parent);
+    }
+
     execute(program: ASTElement): Scope {
-        const { variables, functions } = this.parseImports(program.find("imports"));
-        this.exec(program.find("body"), variables, functions);
-        return { variables, functions };
+        const scope = this.newScope();
+        this.parseImports(program.find("imports"), scope);
+        this.exec(program.find("body"), scope);
+        return scope;
     }
 
     load(source: string): Scope {
