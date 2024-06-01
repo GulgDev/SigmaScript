@@ -1,4 +1,4 @@
-import { SigmaScript } from "./sigmascript";
+import { SigmaScriptX as SigmaScript } from "./sigmascriptx/sigmascriptx";
 
 const demos: { [key: string]: string } = {
     "hello-world": `print "Hello world!";`,
@@ -61,12 +61,14 @@ fn bar(callback) {
 bar(fn("foo"));`
 };
 
+const sigmaScript = new SigmaScript();
+
 const code = document.getElementById("code") as HTMLTextAreaElement;
 const runButton = document.getElementById("run") as HTMLButtonElement;
 const demoSelect = document.getElementById("demo-select") as HTMLSelectElement;
 
 runButton.addEventListener("click", () => {
-    if (!SigmaScript.load(code.value))
+    if (!sigmaScript.load(code.value))
         console.error("invalid syntax");
 });
 

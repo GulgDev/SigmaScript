@@ -18,8 +18,5 @@ module.exports = merge(common, {
                 exclude: /node_modules/
             }
         ]
-    },
-    devServer: {
-        static: "./dist"
     }
 });

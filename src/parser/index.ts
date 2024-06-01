@@ -7,7 +7,7 @@ type Definition = {
     pattern: string
 } | string;
 
-type Grammar = {
+export type Grammar = {
     [key: string]: Definition,
     root: Definition
 };
@@ -47,6 +47,10 @@ export class ASTElement {
 
     get(index: number): ASTElement | null {
         return this.children[index];
+    }
+
+    findChildren(name: string): ASTElement[] {
+        return this.children.filter((child) => child.name === name);
     }
 
     findChild(name: string): ASTElement | null {
@@ -92,4 +96,31 @@ export class Parser {
         visit(match, root);
         return root;
     }
+}
+
+function mergePatterns(a: string, b: string) {
+    return b.replace(/\.\.\./g, a);
+}
+
+function merge(a: Definition, b: Definition): Definition {
+    if (!a) return b;
+    if (!b) return a;
+    if (typeof a === "string" && typeof b === "string") return mergePatterns(a, b);
+    if (typeof a === "string" && typeof b !== "string") return { ...b, pattern: mergePatterns(a, b.pattern) };
+    if (typeof a !== "string" && typeof b === "string") return { ...a, pattern: mergePatterns(a.pattern, b) };
+    if (typeof a !== "string" && typeof b !== "string")
+        return {
+            pattern: mergePatterns(a.pattern, b.pattern),
+            precedence: b.precedence ?? a.precedence,
+            preservePrecedence: b.preservePrecedence ?? a.preservePrecedence
+        };
+}
+
+export function inherit(parent: Grammar, grammar: Partial<Grammar>): Grammar {
+    const result: Grammar = { root: merge(parent.root, grammar.root) };
+    for (const name in parent)
+        if (!(name in result)) result[name] = merge(parent[name], grammar[name]);
+    for (const name in grammar)
+        if (!(name in result)) result[name] = merge(parent[name], grammar[name]);
+    return result;
 }

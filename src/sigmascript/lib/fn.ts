@@ -1,9 +1,9 @@
-import { SigmaScript } from "..";
+import { SSFunction } from "../sigmascript";
 import { NativeLib } from "./lib";
 
 let funcId = -1;
 
-const funcs: { [key: string]: SigmaScript.Function } = {};
+const funcs: { [key: string]: SSFunction } = {};
 
 export const fnLib = new NativeLib({}, {
     fn([ name ], { functions }) {
@@ -12,6 +12,6 @@ export const fnLib = new NativeLib({}, {
         return key;
     },
     call([ fn, ...args ], scope) {
-        return funcs[fn]?.(args, scope) ?? undefined;
+        return funcs[fn]?.(args, scope) ?? "unknown";
     }
 });

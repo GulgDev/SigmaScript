@@ -1,8 +1,7 @@
-const path = require("path");
-
 module.exports = {
     entry: {
-        "sigmascript": "./src/index.ts",
+        "dist/sigmascript": "./src/sigmascript/index.ts",
+        "dist/sigmascriptx": "./src/sigmascriptx/index.ts",
         "demo/index": "./src/demo.ts"
     },
     resolve: {
@@ -10,6 +9,6 @@ module.exports = {
     },
     output: {
         filename: "[name].js",
-        path: path.resolve(__dirname, "dist")
+        path: __dirname
     }
 };

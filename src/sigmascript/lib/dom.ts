@@ -31,7 +31,7 @@ export const domLib = new NativeLib({
         return saveElement(element);
     },
     dom_append([ parent, child ]) {
-        getElement(parent)?.appendChild(getElement(child));
+        getElement(parent)?.appendChild(getElement(child) ?? document.createTextNode(child));
         return "unknown";
     },
     dom_remove([ element ]) {
@@ -73,6 +73,12 @@ export const domLib = new NativeLib({
     dom_css([ element, attr, value ]) {
         const elm = getElement(element);
         if (elm instanceof HTMLElement) elm.style.setProperty(attr, value);
+        return "unknown";
+    },
+    dom_event([ element, event, callback ], scope) {
+        const elm = getElement(element);
+        const fn = scope.functions[callback];
+        elm.addEventListener(event, () => fn([], scope));
         return "unknown";
     }
 });
