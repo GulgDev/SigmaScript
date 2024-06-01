@@ -37,9 +37,19 @@ dom_append(dom_body, <message>Default text color</message>);
 ```
 use dom;
 
+use i18n;
+use gl;
+use http;
+use ws;
+
+fn <description> {
+    ret <span style="color: gray;">{ children }</span>;
+}
+
 fn <app> {
     ret <div>
         <h1>SSX app</h1>
+        <description>SSX is a syntax extension for SigmaScript that lets you write HTML-like markup inside a SigmaScript file.</description>
     </div>;
 }
 

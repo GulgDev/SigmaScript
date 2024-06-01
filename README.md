@@ -89,6 +89,9 @@ Fn lib allows you to create callbacks. Use `fn` to create a callback from functi
 #### Ref
 Ref lib allows you to create references to objects. Use `ref` to create a reference. Use `ref_get` and `ref_set` to get/set the current value of reference.
 
+#### Native libraries
+You can create your own JS libs and then use them in SS. See [this article](native-libs.md) to learn how to do it.
+
 ### SSX
 Did you hear about JSX? Of course you did! Well, I'm glad to introduce you SigmaScriptX! It is way more convenient than just using boring DOM. To use SSX add the SigmaScriptX loader to your page (SSX loader includes SS loader so you don't have to add two different loader scripts):
 ```html

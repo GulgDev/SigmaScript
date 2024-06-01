@@ -1,27 +1,34 @@
 import { SSFunction, Scope, SigmaScript } from "../sigmascript";
 import { ASTElement } from "../../parser";
 
-export class SigmaScriptLib {
+export interface Lib {
+    use(scope: Scope): void;
+}
+
+export class SigmaScriptLib implements Lib {
+    private readonly sigmaScript: SigmaScript;
     private readonly program: ASTElement;
 
-    constructor(program: ASTElement) {
+    constructor(sigmaScript: SigmaScript, program: ASTElement) {
+        this.sigmaScript = sigmaScript;
         this.program = program;
     }
 
-    use(sigmaScript: SigmaScript, scope: Scope) {
-        const libScope = sigmaScript.execute(this.program);
+    use(scope: Scope) {
+        const libScope = this.sigmaScript.execute(this.program);
         Object.assign(scope.variables, libScope.variables);
         Object.assign(scope.functions, libScope.functions);
     }
 }
 
-export class NativeLib {
-    public readonly variables: Readonly<{ [key: string]: string }>;
-    public readonly functions: Readonly<{ [key: string]: SSFunction }>;
+export class NativeLib implements Lib {
+    protected readonly sigmaScript: SigmaScript;
 
-    constructor(variables: { [key: string]: string }, functions: { [key: string]: SSFunction }) {
-        this.variables = variables;
-        this.functions = functions;
+    readonly variables: Readonly<{ [key: string]: string }> = {};
+    readonly functions: Readonly<{ [key: string]: SSFunction }> = {};
+
+    constructor(sigmaScript: SigmaScript) {
+        this.sigmaScript = sigmaScript;
     }
 
     use(scope: Scope) {

@@ -1,9 +1,9 @@
 import { ASTElement, Grammar, Parser, inherit } from "../parser";
-import { SigmaScriptLib } from "./lib";
-import { domLib } from "./lib/dom";
-import { fnLib } from "./lib/fn";
-import { jsLib } from "./lib/js";
-import { refLib } from "./lib/ref";
+import { Lib, SigmaScriptLib } from "./lib";
+import { DOMLib } from "./lib/dom";
+import { FnLib } from "./lib/fn";
+import { JSLib } from "./lib/js";
+import { RefLib } from "./lib/ref";
 import { grammar } from "./grammar";
 
 export class Scope {
@@ -23,32 +23,20 @@ export type SSFunction = (args: string[], scope: Scope) => string;
 export class SigmaScript {
     private readonly parser: Parser;
 
-    protected readonly libs: { [key: string]: SigmaScriptLib } = {};
+    protected readonly libs: { [key: string]: Lib } = {};
 
     constructor(mergeGrammar: Partial<Grammar> = {}) {
         this.parser = new Parser(inherit(grammar, mergeGrammar));
+
+        this.addLib("dom", new DOMLib(this));
+        this.addLib("fn", new FnLib(this));
+        this.addLib("js", new JSLib(this));
+        this.addLib("ref", new RefLib(this));
     }
 
     protected parseImports(imports: ASTElement, scope: Scope) {
-        for (const use of imports) {
-            const name = use.find("name").value;
-            if (name in this.libs) this.libs[name].use(this, scope);
-            else
-                switch (name) {
-                    case "js":
-                        jsLib.use(scope);
-                        break;
-                    case "dom":
-                        domLib.use(scope);
-                        break;
-                    case "ref":
-                        refLib.use(scope);
-                        break;
-                    case "fn":
-                        fnLib.use(scope);
-                        break;
-                }
-        }
+        for (const use of imports)
+            this.libs[use.find("name").value]?.use(scope);
     }
 
     protected parseString(raw: string) {
@@ -218,6 +206,14 @@ export class SigmaScript {
             source = script.innerText;
         this.load(source);
     }
+
+    addLib(name: string, lib: Lib) {
+        this.libs[name] = lib;
+    }
+
+    getLib<T extends Lib>(libClass: { new(...args: any): T }): T {
+        return Object.values(this.libs).find((lib) => lib instanceof libClass) as T;
+    }
     
     initLoader() {
         new MutationObserver((mutations) => {
@@ -247,7 +243,7 @@ export class SigmaScript {
         if (!program || program.end.offset !== source.length) return;
         const lib = program.findChild("lib");
         if (lib)
-            this.libs[lib.find("name").value] = new SigmaScriptLib(program);
+            this.addLib(lib.find("name").value, new SigmaScriptLib(this, program));
         else
             return this.execute(program);
     }

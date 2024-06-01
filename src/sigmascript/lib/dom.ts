@@ -1,84 +1,109 @@
 import { NativeLib } from ".";
+import { Registry } from "../registry";
+import { SSFunction, Scope } from "../sigmascript";
 
-let elementId = -1;
+export class DOMLib extends NativeLib {
+    private readonly registry = new Registry<Element>("dom");
 
-const elements: { [key: string]: Element } = {};
+    readonly variables: Readonly<{ [key: string]: string }> = {
+        dom_head: this.registry.add(document.head),
+        dom_body: this.registry.add(document.body)
+    };
+    readonly functions: Readonly<{ [key: string]: SSFunction }> = {
+        dom_title: ([ title ]) => this.title(title),
+        dom_create: ([ tagName ]) => this.create(tagName),
+        dom_find: ([ selector ]) => this.find(selector),
+        dom_append: ([ parent, child ]) => this.append(parent, child),
+        dom_remove: ([ element ]) => this.remove(element),
+        dom_add_class: ([ element, className ]) => this.addClass(element, className),
+        dom_remove_class: ([ element, className ]) => this.removeClass(element, className),
+        dom_toggle_class: ([ element, className ]) => this.toggleClass(element, className),
+        dom_set_text: ([ element, text ]) => this.setText(element, text),
+        dom_set_html: ([ element, html ]) => this.setHtml(element, html),
+        dom_set_attr: ([ element, attr, value ]) => this.setAttr(element, attr, value),
+        dom_get_attr: ([ element, attr ]) => this.getAttr(element, attr),
+        dom_css: ([ element, prop, value ]) => this.css(element, prop, value),
+        dom_event: ([ element, event, callback ], scope) => this.event(element, event, callback, scope)
+    };
+    
+    getElement(handle: string): Element {
+        return this.registry.get(handle);
+    }
 
-function saveElement(element: Element): string {
-    const key = `#dom:${++elementId}`;
-    elements[key] = element;
-    return key;
-}
-
-function getElement(handle: string): Element {
-    return elements[handle];
-}
-
-export const domLib = new NativeLib({
-    dom_head: saveElement(document.head),
-    dom_body: saveElement(document.body)
-}, {
-    dom_title([ title ]) {
+    title(title: string) {
         document.title = title;
         return "unknown";
-    },
-    dom_create([ tagName ]) {
-        return saveElement(document.createElement(tagName));
-    },
-    dom_find([ selector ]) {
+    }
+
+    create(tagName: string) {
+        return this.registry.add(document.createElement(tagName));
+    }
+
+    find(selector: string) {
         const element = document.querySelector(selector);
         if (!element) return "unknown";
-        return saveElement(element);
-    },
-    dom_append([ parent, child ]) {
-        getElement(parent)?.appendChild(getElement(child) ?? document.createTextNode(child));
+        return this.registry.add(element);
+    }
+
+    append(parent: string, child: string) {
+        this.getElement(parent)?.appendChild(this.getElement(child) ?? document.createTextNode(child));
         return "unknown";
-    },
-    dom_remove([ element ]) {
-        getElement(element).remove();
+    }
+
+    remove(element: string) {
+        this.getElement(element).remove();
         return "unknown";
-    },
-    dom_add_class([ element, className ]) {
-        const elm = getElement(element);
+    }
+
+    addClass(element: string, className: string) {
+        const elm = this.getElement(element);
         if (elm instanceof HTMLElement) elm.classList.add(className);
         return "unknown";
-    },
-    dom_remove_class([ element, className ]) {
-        const elm = getElement(element);
+    }
+
+    removeClass(element: string, className: string) {
+        const elm = this.getElement(element);
         if (elm instanceof HTMLElement) elm.classList.remove(className);
         return "unknown";
-    },
-    dom_toggle_class([ element, className ]) {
-        const elm = getElement(element);
+    }
+
+    toggleClass(element: string, className: string) {
+        const elm = this.getElement(element);
         if (elm instanceof HTMLElement) elm.classList.toggle(className);
         return "unknown";
-    },
-    dom_set_text([ element, text ]) {
-        const elm = getElement(element);
+    }
+
+    setText(element: string, text: string) {
+        const elm = this.getElement(element);
         if (elm instanceof HTMLElement) elm.innerText = text;
         return "unknown";
-    },
-    dom_set_html([ element, html ]) {
-        const elm = getElement(element);
+    }
+
+    setHtml(element: string, html: string) {
+        const elm = this.getElement(element);
         if (elm instanceof HTMLElement) elm.innerHTML = html;
         return "unknown";
-    },
-    dom_set_attr([ element, attr, value ]) {
-        getElement(element)?.setAttribute(attr, value);
+    }
+
+    setAttr(element: string, attr: string, value: string) {
+        this.getElement(element)?.setAttribute(attr, value);
         return "unknown";
-    },
-    dom_get_attr([ element, attr ]) {
-        return getElement(element)?.getAttribute(attr);
-    },
-    dom_css([ element, attr, value ]) {
-        const elm = getElement(element);
-        if (elm instanceof HTMLElement) elm.style.setProperty(attr, value);
+    }
+
+    getAttr(element: string, attr: string) {
+        return this.getElement(element)?.getAttribute(attr);
+    }
+
+    css(element: string, prop: string, value: string) {
+        const elm = this.getElement(element);
+        if (elm instanceof HTMLElement) elm.style.setProperty(prop, value);
         return "unknown";
-    },
-    dom_event([ element, event, callback ], scope) {
-        const elm = getElement(element);
+    }
+
+    event(element: string, event: string, callback: string, scope: Scope) {
+        const elm = this.getElement(element);
         const fn = scope.functions[callback];
         elm.addEventListener(event, () => fn([], scope));
         return "unknown";
     }
-});
+}

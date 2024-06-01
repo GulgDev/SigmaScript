@@ -1,17 +1,20 @@
-import { SSFunction } from "../sigmascript";
+import { SSFunction, Scope } from "../sigmascript";
 import { NativeLib } from ".";
+import { Registry } from "../registry";
 
-let funcId = -1;
+export class FnLib extends NativeLib {
+    private readonly registry = new Registry<SSFunction>("fn");
 
-const funcs: { [key: string]: SSFunction } = {};
+    readonly functions: Readonly<{ [key: string]: SSFunction }> = {
+        fn: ([ name ], scope) => this.fn(name, scope),
+        call: ([ fn, ...args ], scope) => this.call(fn, args, scope)
+    };
 
-export const fnLib = new NativeLib({}, {
-    fn([ name ], { functions }) {
-        const key = `#fn:${++funcId}`;
-        funcs[key] = functions[name];
-        return key;
-    },
-    call([ fn, ...args ], scope) {
-        return funcs[fn]?.(args, scope) ?? "unknown";
+    fn(name: string, scope: Scope) {
+        return this.registry.add(scope.functions[name]);
     }
-});
+
+    call(fn: string, args: string[], scope: Scope) {
+        return this.registry.get(fn)?.(args, scope) ?? "unknown";
+    }
+}

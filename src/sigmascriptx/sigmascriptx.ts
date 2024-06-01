@@ -1,30 +1,7 @@
 import { Scope, SigmaScript } from "../sigmascript/sigmascript";
 import { ASTElement, Grammar } from "../parser";
-import { domLib } from "../sigmascript/lib/dom";
-
-/*
-use dom;
-
-dom_append(dom_body,
-    <div attr="test">
-        <span>Hello world! 2 + 2 = {2 + 2}</span>
-    </div>
-);
-*/
-
-/*
-use dom;
-
-fn <test class="default" > {
-    ret <span class={class}>{ children }</span>;
-}
-
-dom_append(dom_body,
-    <div>
-        <test class="test">Hello world!</test>
-    </div>
-);
-*/
+import { Registry } from "../sigmascript/registry";
+import { DOMLib } from "../sigmascript/lib/dom";
 
 const grammar: Partial<Grammar> = {
     "htmlname": "[a-z0-9-]+",
@@ -58,8 +35,7 @@ class SSXScope extends Scope {
 }
 
 export class SigmaScriptX extends SigmaScript {
-    private readonly groups: { [key: string]: string[] } = {};
-    private groupId = -1;
+    private readonly groupRegistry = new Registry<string[]>("ssxgroup");
 
     constructor() {
         super(grammar);
@@ -81,7 +57,7 @@ export class SigmaScriptX extends SigmaScript {
                     value = this.evalExpr(child, scope);
                     break;
             }
-            const group = this.groups[value];
+            const group = this.groupRegistry.get(value);
             if (group)
                 children.push(...group);
             else
@@ -104,23 +80,19 @@ export class SigmaScriptX extends SigmaScript {
                     const attrvals: { [key: string]: string } = {};
                     for (const attr of expr.findChildren("htmlattr"))
                         attrvals[attr.find("htmlname").value] = this.evalExpr(attr.find("htmlattrval").first, scope);
-                    let children = "unknown";
-                    if (isPaired) {
-                        children = `#ssxgroup:${++this.groupId}`;
-                        this.groups[children] = this.parseHTMLContent(expr.find("htmlcontent"), scope);
-                    }
-                    return component(children, attrvals);
+                    return component(isPaired ? this.groupRegistry.add(this.parseHTMLContent(expr.find("htmlcontent"), scope)) : "unknown", attrvals);
                 } else {
-                    const element = domLib.functions.dom_create([tagName], scope);
+                    const domLib = this.getLib(DOMLib);
+                    const element = domLib.create(tagName);
                     for (const attr of expr.findChildren("htmlattr"))
-                        domLib.functions.dom_set_attr([
+                        domLib.setAttr(
                             element,
                             attr.find("htmlname").value,
                             this.evalExpr(attr.find("htmlattrval").first, scope)
-                        ], scope);
+                        );
                     if (isPaired)
                         for (const child of this.parseHTMLContent(expr.find("htmlcontent"), scope))
-                            domLib.functions.dom_append([element, child], scope);
+                            domLib.append(element, child);
                     return element;
                 }
             }
