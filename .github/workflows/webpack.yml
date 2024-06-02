@@ -43,4 +43,4 @@ jobs:
         git checkout $TARGET_BRANCH --
         git add --force $SRC_FOLDER_PATH
         git diff-index --quiet HEAD || git commit -am "Auto-update"
-        git push -f origin `git subtree splite -P $SRC_FOLDER_PATH`:refs/heads/$TARGET_BRANCH
+        git push -f origin `git subtree split -P $SRC_FOLDER_PATH`:refs/heads/$TARGET_BRANCH
