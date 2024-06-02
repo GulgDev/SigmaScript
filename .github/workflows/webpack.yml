@@ -41,6 +41,7 @@ jobs:
         git config user.email 'action@github.com'
         git fetch
         git checkout $TARGET_BRANCH --
-        git add -A $files
+        git add --force $files
         git diff-index --quiet HEAD || git commit -am "Auto-update"
-        git push origin $TARGET_BRANCH
+        git push origin :$TARGET_BRANCH
+        git subtree push --prefix $SRC_FOLDER_PATH origin :$TARGET_BRANCH
