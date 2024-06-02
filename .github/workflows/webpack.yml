@@ -30,9 +30,6 @@ jobs:
       
         source-directory: demo
         target-branch: gh-pages
-    
-    - run: |
-        ls 'dist/sigmascript.js'
 
     - name: Copy built files to dist branch
       env:
@@ -44,6 +41,7 @@ jobs:
         git config user.email 'action@github.com'
         git fetch
         git checkout $TARGET_BRANCH --
+        ls 'dist/sigmascript.js'
         git add --force $SRC_FOLDER_PATH
         git commit -m "Auto-update"
         git push -f origin `git subtree split -P $SRC_FOLDER_PATH`:refs/heads/$TARGET_BRANCH
