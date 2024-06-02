@@ -37,11 +37,6 @@ dom_append(dom_body, <message>Default text color</message>);
 ```
 use dom;
 
-use i18n;
-use gl;
-use http;
-use ws;
-
 fn <description> {
     ret <span style="color: gray;">{ children }</span>;
 }
