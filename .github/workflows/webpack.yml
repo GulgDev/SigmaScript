@@ -30,10 +30,6 @@ jobs:
       
         source-directory: demo
         target-branch: gh-pages
-    
-    - name: Get files
-      run: |
-        ls
 
     - name: Copy built files to dist branch
       env:
@@ -44,7 +40,7 @@ jobs:
         git config user.name 'GitHub Action'
         git config user.email 'action@github.com'
         git fetch
-        git switch $TARGET_BRANCH
+        git checkout $TARGET_BRANCH --
         git add --force $SRC_FOLDER_PATH
         git diff-index --quiet HEAD || git commit -am "Auto-update"
         git push -f origin `git subtree split -P $SRC_FOLDER_PATH`:refs/heads/$TARGET_BRANCH
