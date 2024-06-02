@@ -23,7 +23,15 @@ jobs:
         npm install
         npm run build
 
-    - name: copy
+    - name: Publish demo to GitHub Pages
+      uses: rayluo/github-pages-overwriter@v1.3
+
+      with:
+      
+        source-directory: demo
+        target-branch: gh-pages
+
+    - name: Copy built files to dist branch
       env:
         SRC_FOLDER_PATH: 'dist'
         TARGET_BRANCH: 'dist'
