@@ -50,7 +50,7 @@ while x < 10 {
 There's no types in SigmaScript. If the operation is invalid you get `unknown`.
 
 ### Variables and functions
-In SigmaScript, variables and functions are two different things. For example, you could create a variable and a function with the same name and use them without any troubles:
+In SigmaScript, variables and functions are two different things. For example, you could create a variable and a function with the same name and use them without any problems:
 ```
 fn x() {
     print "I'm working!";
