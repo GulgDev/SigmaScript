@@ -11,7 +11,9 @@ class ExampleLib extends NativeLib { // Export some variables & functions
 
 sigmaScript.addLib("example", new ExampleLib(sigmaScript)); // Add lib to SigmaScript to make it useable in script files
 ```
-Each variable must be a string, and each function must be a function which takes a list of arguments (string array) and current scope (object with the following properties: `variables`, `function` in SS and `components` only in SSX). 
+Each variable must be a string, and each function must be a function which takes a list of arguments (string array) and current scope (object with the following properties: `variables`, `function` in SS and `components` only in SSX).
+
+Libraries can access current SigmaScript instance using `this.sigmaScript`. You can also use global `sigmaScript`, but lib property is more preferable.
 
 ## Example
 ```js
