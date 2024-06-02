@@ -1,3 +1,4 @@
 import { SigmaScriptX } from "./sigmascriptx";
 
-new SigmaScriptX().initLoader();
+window.sigmaScript = new SigmaScriptX();
+window.sigmaScript.initLoader();
