@@ -9,13 +9,15 @@ export class SigmaScriptLib implements Lib {
     private readonly sigmaScript: SigmaScript;
     private readonly program: ASTElement;
 
+    private result: Scope | null = null;
+
     constructor(sigmaScript: SigmaScript, program: ASTElement) {
         this.sigmaScript = sigmaScript;
         this.program = program;
     }
 
     use(scope: Scope) {
-        this.sigmaScript.execute(this.program).copyTo(scope);
+        (this.result ?? (this.result = this.sigmaScript.execute(this.program))).copyTo(scope);
     }
 }
 
