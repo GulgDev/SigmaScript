@@ -30,6 +30,9 @@ jobs:
       
         source-directory: demo
         target-branch: gh-pages
+    
+    - run: |
+        ls 'dist/sigmascript.js'
 
     - name: Copy built files to dist branch
       env:
