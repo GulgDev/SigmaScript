@@ -61,10 +61,30 @@ x = 10;
 x();
 print x;
 ```
-Thus, you can't use callbacks as functions can't be passed as arguments to other functions. But you can use `fn` lib.
+Thus, you can't use callbacks as functions can't be passed as arguments to other functions. But you can use the `fn` lib or lambda functions.
+
+### Lambda functions
+Lambda functions are function expressions that behave like wrapped functions:
+```
+use fn;
+
+fn function() {
+    print "Function is called!";
+}
+
+lambda = () => {
+    print "Lambda is called!";
+};
+
+function();
+call(lambda);
+
+print "function = " @ function;
+print "lambda = " @ lambda;
+```
 
 ### Libraries
-There's 4 default libs in SigmaScript: `js`, `dom`, `fn`, `ref`. To use a lib in your program simply add `use` header:
+There's 5 default libs in SigmaScript: `js`, `dom`, `fn`, `ref`, `struct`. To use a lib in your program simply add `use` header:
 ```
 use js;
 
@@ -79,7 +99,7 @@ lib example;
 Lib files aren't executed unless they are used in non-lib scripts.
 
 #### JS
-JS lib allows you to access JavaScript functions and objects from SigmaScript. Use `js` function to evaluate JavaScript code from string. Use `js_get` and `js_set` to get/set properties of objects. Use `js_new` and `js_call` to call JavaScript object as a constructor/function. Use `js_call_method` to call a method of given object. There's `js_window` variable to access the `window` object.
+JS lib allows you to access JavaScript functions and objects from SigmaScript. Use `js` function to evaluate JavaScript code from string. Use `js_get` and `js_set` to get/set properties of objects. Use `js_new` and `js_call` to call JavaScript object as a constructor/function. Use `js_object` to create an empty JS object and `js_array` to create an empty array. Use `js_call_method` to call a method of given object. There's `js_window` variable to access the `window` object.
 
 #### DOM
 DOM lib allows you to manipulate the DOM. Use `dom_title` to change the title of the page. Use `dom_create` to create a new element. Use `dom_find` to query an element by selector. Use `dom_append` to append a child to an element. Use `dom_remove` to remove an element. Use `dom_add_class`, `dom_remove_class`, `dom_toggle_class` to change element classes. Use `dom_set_text` or `dom_set_html` to change the contents of an element. Use `dom_get_attr` and `dom_set_attr` to change attributes of an element. Use `dom_css` to change CSS properties of an element. There are `dom_body` and `dom_head` to quickly access document body and head.
@@ -89,6 +109,9 @@ Fn lib allows you to create callbacks. Use `fn` to create a callback from functi
 
 #### Ref
 Ref lib allows you to create references to objects. Use `ref` to create a reference. Use `ref_get` and `ref_set` to get/set the current value of reference.
+
+### Struct
+Struct lib allows you to create and modify structures. Use `struct` to create a new struct. Use `struct_get` and `struct_set` to get/set fields of a structure.
 
 #### Native libraries
 You can create your own JS libs and then use them in SS. See [this article](native-libs.md) to learn how to do it.
@@ -105,6 +128,9 @@ use dom;
 dom_append(dom_body, <h1>Hello world!</h1>);
 ```
 See [this article](ssx.md) to learn more about SSX.
+
+## Best practices
+See [this article](best-practices.md) to be a good sigma-scripter!
 
 ## More info
 Browse the source code if you want to know more about how this project works.

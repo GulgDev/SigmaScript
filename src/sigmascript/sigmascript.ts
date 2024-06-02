@@ -4,6 +4,7 @@ import { DOMLib } from "./lib/dom";
 import { FnLib } from "./lib/fn";
 import { JSLib } from "./lib/js";
 import { RefLib } from "./lib/ref";
+import { StructLib } from "./lib/struct";
 import { grammar } from "./grammar";
 
 export class Scope {
@@ -37,6 +38,19 @@ export class SigmaScript {
         this.addLib("fn", new FnLib(this));
         this.addLib("js", new JSLib(this));
         this.addLib("ref", new RefLib(this));
+        this.addLib("struct", new StructLib(this));
+    }
+
+    private fnScope(scope: Scope, args: string[], params: string[]) {
+        const localScope = this.newScope(scope);
+        let i = 0;
+        for (const param of params) {
+            const arg = args[i];
+            if (!arg) break;
+            localScope.variables[param] = arg;
+            ++i;
+        }
+        return localScope;
     }
 
     protected parseImports(imports: ASTElement, scope: Scope) {
@@ -138,6 +152,15 @@ export class SigmaScript {
                 const args = Array.from(expr.find("arglist")).map((arg) => this.evalExpr(arg, scope));
                 return func(args, scope);
             }
+            case "lambda": {
+                const body = expr.findChild("body");
+                const retExpr = expr.findChild("expr");
+                const params = Array.from(expr.find("paramlist")).map((param) => param.value);
+                return this.getLib(FnLib).addFn((args: string[]) => {
+                    const localScope = this.fnScope(scope, args, params);
+                    return (body && this.exec(body, localScope)) ?? (retExpr && this.evalExpr(retExpr, localScope)) ?? "unknown";
+                });
+            }
         }
         return "unknown";
     }
@@ -170,21 +193,12 @@ export class SigmaScript {
             case "function": {
                 const body = statement.find("body");
                 const params = Array.from(statement.find("paramlist")).map((param) => param.value);
-                scope.functions[statement.find("name").value] = (args: string[]) => {
-                    const localScope = this.newScope(scope);
-                    let i = 0;
-                    for (const param of params) {
-                        const arg = args[i];
-                        if (!arg) break;
-                        localScope.variables[param] = arg;
-                        ++i;
-                    }
-                    return this.exec(body, localScope) ?? "unknown";
-                };
+                scope.functions[statement.find("name").value] = (args: string[]) =>
+                    this.exec(body, this.fnScope(scope, args, params)) ?? "unknown";
                 break;
             }
             case "print":
-                console.log(this.evalExpr(statement.find("expr"), scope));
+                console.log(this.getLib(JSLib).toJS(this.evalExpr(statement.find("expr"), scope)) ?? "unknown");
                 break;
             case "callstat":
                 this.evalExpr(statement.first, scope);

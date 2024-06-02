@@ -56,9 +56,10 @@ export const grammar: Grammar = {
     "not": "! %expr",
     "arglist": "(%expr( , %expr)+?)?",
     "call": "%name %( %arglist %)",
+    "lambda": "%( %paramlist %) => ({ %body })|%expr",
     "parenthesisexpr": "%( %expr %)",
     "expr": {
-        pattern: "%parenthesisexpr|%number|%string|%bool|%name|%add|%sub|%mul|%div|%concat|%eq|%lt|%gt|%le|%ge|%or|%and|%not|%call",
+        pattern: "%parenthesisexpr|%number|%string|%bool|%name|%add|%sub|%mul|%div|%concat|%eq|%lt|%gt|%le|%ge|%or|%and|%not|%call|%lambda",
         preservePrecedence: true
     },
     "assign": "%name = %expr;",

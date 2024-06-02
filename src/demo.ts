@@ -58,7 +58,30 @@ fn bar(callback) {
     print "I got " @ call(callback) @ " from callback";
 }
 
-bar(fn("foo"));`
+bar(fn("foo"));
+`,
+    "struct": `
+use struct;
+
+fn point_new(x, y) {
+    point = struct();
+    struct_set(point, "x", x);
+    struct_set(point, "y", y);
+    ret point;
+}
+
+fn point_str(point) {
+    x = struct_get(point, "x");
+    y = struct_get(point, "y");
+    ret "{ x=" @ x @ ", y=" @ y @ " }";
+}
+
+p1 = point_new(123, 321);
+p2 = point_new(321, 123);
+
+print "p1: " @ point_str(p1);
+print "p2: " @ point_str(p2);
+`
 };
 
 const sigmaScript = new SigmaScript();

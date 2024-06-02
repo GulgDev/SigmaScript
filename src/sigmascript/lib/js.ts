@@ -1,6 +1,9 @@
 import { NativeLib } from ".";
 import { Registry } from "../registry";
 import { SSFunction } from "../sigmascript";
+import { DOMLib } from "./dom";
+import { RefLib } from "./ref";
+import { StructLib } from "./struct";
 
 export class JSLib extends NativeLib {
     private readonly registry = new Registry<any>("js");
@@ -13,6 +16,8 @@ export class JSLib extends NativeLib {
         js_get: ([ handle, property ]) => this.get(handle, property),
         js_set: ([ handle, property, value ]) => this.set(handle, property, value),
         js_new: ([ handle, ...args ]) => this.new(handle, args),
+        js_object: () => this.toSS({}),
+        js_array: () => this.toSS([]),
         js_call: ([ handle, ...args ]) => this.call(handle, args),
         js_call_method: ([ handle, method, ...args ]) => this.callMethod(handle, method, args)
     };
@@ -23,9 +28,12 @@ export class JSLib extends NativeLib {
     
     toJS(value: string): any {
         if (value.startsWith("#js:")) return this.getObject(value);
+        if (value.startsWith("#struct:")) return this.sigmaScript.getLib(StructLib).getStruct(value);
+        if (value.startsWith("#dom:")) return this.sigmaScript.getLib(DOMLib).getElement(value);
+        if (value.startsWith("#ref:")) return this.toJS(this.sigmaScript.getLib(RefLib).get(value));
         if (value === "unknown") return undefined;
         if (value === "false") return false;
-        if (value === "true") return false;
+        if (value === "true") return true;
         const number = Number.parseInt(value);
         if (!Number.isNaN(number)) return number;
         return value;
