@@ -30,6 +30,10 @@ jobs:
       
         source-directory: demo
         target-branch: gh-pages
+    
+    - name: Get files
+      run: |
+        ls
 
     - name: Copy built files to dist branch
       env:
