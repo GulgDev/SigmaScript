@@ -41,8 +41,7 @@ jobs:
         git config user.email 'action@github.com'
         git branch -f $TARGET_BRANCH HEAD
         git checkout $TARGET_BRANCH --
-        git fetch
-        ls 'dist/sigmascript.js'
+        date > $SRC_FOLDER_PATH/date.txt
         git add --force $files
         git commit -m "Auto-update"
         git push -f origin `git subtree split -P $SRC_FOLDER_PATH`:refs/heads/$TARGET_BRANCH
