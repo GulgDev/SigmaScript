@@ -44,4 +44,4 @@ jobs:
         git add --force $files
         git diff-index --quiet HEAD || git commit -am "Auto-update"
         git push origin :$TARGET_BRANCH
-        git subtree push --prefix $SRC_FOLDER_PATH origin :$TARGET_BRANCH
+        git subtree push --prefix $SRC_FOLDER_PATH origin $TARGET_BRANCH
