@@ -32,6 +32,11 @@ class SSXScope extends Scope {
         if (scope instanceof SSXScope)
             this.components = { ...scope.components };
     }
+
+    copyTo(scope: Scope) {
+        if (scope instanceof SSXScope)
+            Object.assign(scope.components, this.components);
+    }
 }
 
 export class SigmaScriptX extends SigmaScript {

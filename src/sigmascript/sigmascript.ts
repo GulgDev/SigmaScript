@@ -16,6 +16,11 @@ export class Scope {
             this.functions = { ...scope.functions };
         }
     }
+
+    copyTo(scope: Scope) {
+        Object.assign(scope.variables, this.variables);
+        Object.assign(scope.functions, this.functions);
+    }
 };
 
 export type SSFunction = (args: string[], scope: Scope) => string;

@@ -15,9 +15,7 @@ export class SigmaScriptLib implements Lib {
     }
 
     use(scope: Scope) {
-        const libScope = this.sigmaScript.execute(this.program);
-        Object.assign(scope.variables, libScope.variables);
-        Object.assign(scope.functions, libScope.functions);
+        this.sigmaScript.execute(this.program).copyTo(scope);
     }
 }
 
