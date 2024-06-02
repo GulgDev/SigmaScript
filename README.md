@@ -2,7 +2,8 @@
 ![Logo](demo/logo.png)
 
 Programming language made for sigma males.
-[Demo](https://gulgdev.github.io/SigmaScript/demo/)
+
+[Demo](https://gulgdev.github.io/SigmaScript) ● [Example repo](https://github.com/GulgDev/SigmaScriptExample)
 
 ## Getting started
 To get started simply add SigmaScript loader to your web page:
