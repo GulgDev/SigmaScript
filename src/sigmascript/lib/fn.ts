@@ -10,6 +10,10 @@ export class FnLib extends NativeLib {
         call: ([ fn, ...args ], scope) => this.call(fn, args, scope)
     };
 
+    getFn(fn: string, scope: Scope) {
+        return this.registry.get(fn) ?? scope.functions[fn];
+    }
+
     fn(name: string, scope: Scope) {
         return this.registry.add(scope.functions[name]);
     }

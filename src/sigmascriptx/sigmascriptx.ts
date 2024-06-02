@@ -88,7 +88,8 @@ export class SigmaScriptX extends SigmaScript {
                         domLib.setAttr(
                             element,
                             attr.find("htmlname").value,
-                            this.evalExpr(attr.find("htmlattrval").first, scope)
+                            this.evalExpr(attr.find("htmlattrval").first, scope),
+                            scope
                         );
                     if (isPaired)
                         for (const child of this.parseHTMLContent(expr.find("htmlcontent"), scope))

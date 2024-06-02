@@ -1,4 +1,4 @@
-import { SigmaScriptX as SigmaScript } from "./sigmascriptx/sigmascriptx";
+import { SigmaScript } from "./sigmascript/sigmascript";
 
 const demos: { [key: string]: string } = {
     "hello-world": `print "Hello world!";`,

@@ -1,6 +1,7 @@
 import { NativeLib } from ".";
 import { Registry } from "../registry";
 import { SSFunction, Scope } from "../sigmascript";
+import { FnLib } from "./fn";
 
 export class DOMLib extends NativeLib {
     private readonly registry = new Registry<Element>("dom");
@@ -20,7 +21,7 @@ export class DOMLib extends NativeLib {
         dom_toggle_class: ([ element, className ]) => this.toggleClass(element, className),
         dom_set_text: ([ element, text ]) => this.setText(element, text),
         dom_set_html: ([ element, html ]) => this.setHtml(element, html),
-        dom_set_attr: ([ element, attr, value ]) => this.setAttr(element, attr, value),
+        dom_set_attr: ([ element, attr, value ], scope) => this.setAttr(element, attr, value, scope),
         dom_get_attr: ([ element, attr ]) => this.getAttr(element, attr),
         dom_css: ([ element, prop, value ]) => this.css(element, prop, value),
         dom_event: ([ element, event, callback ], scope) => this.event(element, event, callback, scope)
@@ -85,8 +86,9 @@ export class DOMLib extends NativeLib {
         return "unknown";
     }
 
-    setAttr(element: string, attr: string, value: string) {
-        this.getElement(element)?.setAttribute(attr, value);
+    setAttr(element: string, attr: string, value: string, scope: Scope) {
+        if (attr.startsWith("on")) this.event(element, attr.slice(2), value, scope);
+        else this.getElement(element)?.setAttribute(attr, value);
         return "unknown";
     }
 
@@ -102,8 +104,8 @@ export class DOMLib extends NativeLib {
 
     event(element: string, event: string, callback: string, scope: Scope) {
         const elm = this.getElement(element);
-        const fn = scope.functions[callback];
-        elm.addEventListener(event, () => fn([], scope));
+        const fn = this.sigmaScript.getLib(FnLib).getFn(callback, scope);
+        if (fn) elm.addEventListener(event, () => fn([], scope));
         return "unknown";
     }
 }
