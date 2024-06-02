@@ -39,7 +39,7 @@ jobs:
         files=$(find $SRC_FOLDER_PATH -type f)
         git config user.name 'GitHub Action'
         git config user.email 'action@github.com'
-        git checkout $TARGET_BRANCH --
+        git switch $TARGET_BRANCH
         ls 'dist/sigmascript.js'
         git add --force $files
         git commit -m "Auto-update"
