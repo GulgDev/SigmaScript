@@ -41,6 +41,7 @@ jobs:
         git branch -f $TARGET_BRANCH HEAD
         git checkout $TARGET_BRANCH --
         date > $SRC_FOLDER_PATH/date.txt
+        ls $SRC_FOLDER_PATH
         git add --force $SRC_FOLDER_PATH
         git commit -m "Auto-update"
         git push -f origin `git subtree split -P $SRC_FOLDER_PATH`:refs/heads/$TARGET_BRANCH
