@@ -34,6 +34,7 @@ class SSXScope extends Scope {
     }
 
     copyTo(scope: Scope) {
+        super.copyTo(scope);
         if (scope instanceof SSXScope)
             Object.assign(scope.components, this.components);
     }
