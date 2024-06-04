@@ -114,13 +114,13 @@ Fn lib allows you to create callbacks. Use `fn` to create a callback from functi
 #### Ref
 Ref lib allows you to create references to objects. Use `ref` to create a reference. Use `ref_get` and `ref_set` to get/set the current value of reference.
 
-### Struct
+#### Struct
 Struct lib allows you to create and modify structures. Use `struct` to create a new struct. Use `struct_get` and `struct_set` to get/set fields of a structure.
 
-### Array
+#### Array
 Array lib allows you to create and modify arrays. Use `array` to create a new array. Use `array_add` and `array_remove` to add/remove elements of array. Use `array_at` to access elements of array. Use `array_find` to find index of specific element in array.
 
-### Math
+#### Math
 Math lib allows you to use math functions. It supports `sqrt`, `sin`, `cos`, `tan`, `asin`, `acos`, `atan`, `exp`, `random`, `randint`.
 
 #### Native libraries
