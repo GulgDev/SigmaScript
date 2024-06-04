@@ -3,12 +3,12 @@
 
 Programming language made for sigma males.
 
-[Demo](https://gulgdev.github.io/SigmaScript) ● [Example repo](https://github.com/GulgDev/SigmaScriptExample)
+[Demo](https://gulgdev.github.io/SigmaScript/demo) ● [Example repo](https://github.com/GulgDev/SigmaScriptExample)
 
 ## Getting started
 To get started simply add SigmaScript loader to your web page:
 ```html
-<script src="https://cdn.jsdelivr.net/gh/GulgDev/SigmaScript@dist/sigmascript.js"></script>
+<script src="https://gulgdev.github.io/SigmaScript/sigmascript.js"></script>
 ```
 Then, create a SigmaScript file (or write it directly in script tag like JavaScript code):
 ```html
@@ -129,7 +129,7 @@ You can create your own JS libs and then use them in SS. See [this article](nati
 ### SSX
 Did you hear about JSX? Of course you did! Well, I'm glad to introduce you SigmaScriptX! It is way more convenient than just using boring DOM. To use SSX add the SigmaScriptX loader to your page (SSX loader includes SS loader so you don't have to add two different loader scripts):
 ```html
-<script src="https://cdn.jsdelivr.net/gh/GulgDev/SigmaScript@dist/sigmascriptx.js"></script>
+<script src="https://gulgdev.github.io/SigmaScript/sigmascriptx.js"></script>
 ```
 And now use it in your project:
 ```ssx

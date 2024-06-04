@@ -23,14 +23,14 @@ jobs:
         npm install
         npm run build
 
-    - name: Copy built files to dist branch
+    - name: Copy built files to Github Pages
       run: |
         git config user.name 'GitHub Action'
         git config user.email 'action@github.com'
-        git branch -f dist HEAD
-        git checkout dist --
+        git branch -f gh-pages HEAD
+        git checkout gh-pages --
         cp -r demo dist
         date > dist/date.txt
         git add --force dist
-        git commit -m "Auto-update"
-        git push -f origin `git subtree split -P dist`:refs/heads/dist
+        git commit -m "Build"
+        git push -f origin `git subtree split -P dist`:refs/heads/gh-pages
