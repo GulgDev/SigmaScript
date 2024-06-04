@@ -88,7 +88,7 @@ print "lambda = " @ lambda;
 ```
 
 ### Libraries
-There's 5 default libs in SigmaScript: `js`, `dom`, `fn`, `ref`, `struct`. To use a lib in your program simply add `use` header:
+There's 7 default libs in SigmaScript: `js`, `dom`, `fn`, `ref`, `struct`, `array`, `math`. To use a lib in your program simply add `use` header:
 ```ss
 use js;
 
@@ -116,6 +116,12 @@ Ref lib allows you to create references to objects. Use `ref` to create a refere
 
 ### Struct
 Struct lib allows you to create and modify structures. Use `struct` to create a new struct. Use `struct_get` and `struct_set` to get/set fields of a structure.
+
+### Array
+Array lib allows you to create and modify arrays. Use `array` to create a new array. Use `array_add` and `array_remove` to add/remove elements of array. Use `array_at` to access elements of array. Use `array_find` to find index of specific element in array.
+
+### Math
+Math lib allows you to use math functions. It supports `sqrt`, `sin`, `cos`, `tan`, `asin`, `acos`, `atan`, `exp`, `random`, `randint`.
 
 #### Native libraries
 You can create your own JS libs and then use them in SS. See [this article](native-libs.md) to learn how to do it.

@@ -5,6 +5,7 @@ import { FnLib } from "./lib/fn";
 import { JSLib } from "./lib/js";
 import { RefLib } from "./lib/ref";
 import { StructLib } from "./lib/struct";
+import { ArrayLib } from "./lib/array";
 import { MathLib } from "./lib/math";
 import { grammar } from "./grammar";
 
@@ -40,6 +41,7 @@ export class SigmaScript {
         this.addLib("js", new JSLib(this));
         this.addLib("ref", new RefLib(this));
         this.addLib("struct", new StructLib(this));
+        this.addLib("array", new ArrayLib(this));
         this.addLib("math", new MathLib(this));
     }
 
