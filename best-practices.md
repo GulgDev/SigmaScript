@@ -15,6 +15,7 @@ Here's how you should organize your scripts:
 4. Components
 5. Variables
 6. Executable code
+
 You should split big scripts into smaller ones with similar functions/components/variables.
 
 ## Libraries
