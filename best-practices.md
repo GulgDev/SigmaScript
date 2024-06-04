@@ -1,4 +1,7 @@
-# Best practices (how to be a sigma)
+# Best practices
+The main rule is:
+> Пиши как сигма - это главное, остальное не так важно.
+
 ## Naming conventions
 * Use *camel_case* to name functions and variables.
 * Use *flatcase* or *kebab-case* to name components.
@@ -16,7 +19,7 @@ You should split big scripts into smaller ones with similar functions/components
 
 ## Libraries
 Prefix internal functions/components/variables with an underscore (_). Prefix exported names with library name and an underscore:
-```
+```ss
 lib example;
 
 _internal_var = 1;
@@ -37,7 +40,7 @@ Prefixing exported names is not necessary, but this makes it easier to understan
 SigmaScript is very strict when it comes to scopes.
 
 For example, you can not change variables in parent scope from function scope:
-```
+```ss
 x = 0;
 
 fn test() {
@@ -50,7 +53,7 @@ print x;
 `x` will be still zero, even though the function `test` changes its value. But `test` only changes the `x` value in local function scope, so these changed values will be only accessible from inside the function.
 
 If you want to mutate data from different scope (e.g. global variables, library variables) you should use references:
-```
+```ss
 use ref;
 
 x = ref(0);
@@ -70,7 +73,7 @@ So instead, you could store reference to a function in a variable and then pass 
 
 ### Fn
 Call `fn` function with your function name as the only argument and it will return wrapped function (reference to the function in memory):
-```
+```ss
 use fn;
 
 fn callback() {
@@ -85,17 +88,17 @@ You should stick to lambda functions unless you have a specific use case.
 
 ### Lambda
 Instead of using the `fn` method, you should use a more clear approach: lambda functions. Lambda functions are expressions that behave like wrapped functions. They can be defined using `=>` syntax:
-```
+```ss
 wrapped_callback = () => {
     print "Hello world!";
 };
 ```
 
 To call a wrapped function simply use `call`:
-```
+```ss
 use fn;
 
-...
+// ...
 
 call(wrapped_callback);
 ```
@@ -103,7 +106,7 @@ call(wrapped_callback);
 ## Tips
 1. Don't try to change value of variables from parent scope. Use refs instead.
 2. Avoid using `js` library when possible. Instead, use a native library (or write your own). It is hard to read and it runs slower than regular JS code.
-3. Good luck figuring out what your code does. I haven't added comments to SigmaScript yet so you have to memorize everything XD
+3. Comment your code, but don't write too much comments.
 4. Use SSX instead of `dom`.
 5. Use lambda functions instead of `fn`.
 6. Star this repository!

@@ -8,30 +8,30 @@ Programming language made for sigma males.
 ## Getting started
 To get started simply add SigmaScript loader to your web page:
 ```html
-<script src="https://raw.githubusercontent.com/GulgDev/SigmaScript/dist/sigmascript.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/GulgDev/SigmaScript@dist/sigmascript.js"></script>
 ```
 Then, create a SigmaScript file (or write it directly in script tag like JavaScript code):
 ```html
 <script type="text/sigmascript" src="index.ss"></script>
 ```
-```
+```ss
 print "Hello world!";
 ```
 
 ## Features
 ### Syntax
 You can change variable values using assignment operator:
-```
+```ss
 x = 1;
 ```
 You can define functions using `fn` statement:
-```
+```ss
 fn example() {
     ret "something";
 }
 ```
 You can write if/else and while statements like this:
-```
+```ss
 a = 1;
 b = 1;
 if a = b {
@@ -46,13 +46,17 @@ while x < 10 {
     print x;
 }
 ```
+You can write comments using `//`:
+```ss
+x = 1; // Very important value
+```
 
 ### Types
 There's no types in SigmaScript. If the operation is invalid you get `unknown`.
 
 ### Variables and functions
 In SigmaScript, variables and functions are two different things. For example, you could create a variable and a function with the same name and use them without any problems:
-```
+```ss
 fn x() {
     print "I'm working!";
 }
@@ -65,7 +69,7 @@ Thus, you can't use callbacks as functions can't be passed as arguments to other
 
 ### Lambda functions
 Lambda functions are function expressions that behave like wrapped functions:
-```
+```ss
 use fn;
 
 fn function() {
@@ -85,16 +89,16 @@ print "lambda = " @ lambda;
 
 ### Libraries
 There's 5 default libs in SigmaScript: `js`, `dom`, `fn`, `ref`, `struct`. To use a lib in your program simply add `use` header:
-```
+```ss
 use js;
 
-...
+// ...
 ```
 You can also create custom libs using the `lib` directive:
-```
+```ss
 lib example;
 
-...
+// ...
 ```
 Lib files aren't executed unless they are used in non-lib scripts.
 
@@ -119,10 +123,10 @@ You can create your own JS libs and then use them in SS. See [this article](nati
 ### SSX
 Did you hear about JSX? Of course you did! Well, I'm glad to introduce you SigmaScriptX! It is way more convenient than just using boring DOM. To use SSX add the SigmaScriptX loader to your page (SSX loader includes SS loader so you don't have to add two different loader scripts):
 ```html
-<script src="https://raw.githubusercontent.com/GulgDev/SigmaScript/dist/sigmascriptx.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/GulgDev/SigmaScript@dist/sigmascriptx.js"></script>
 ```
 And now use it in your project:
-```
+```ssx
 use dom;
 
 dom_append(dom_body, <h1>Hello world!</h1>);

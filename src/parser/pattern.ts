@@ -190,11 +190,14 @@ export class GroupPattern extends Pattern {
 }
 
 export class NamedPattern extends Pattern {
+    private readonly unmatched: boolean;
+
     readonly name: string;
 
-    constructor(name: string) {
+    constructor(name: string, unmatched: boolean) {
         super();
         this.name = name;
+        this.unmatched = unmatched;
     }
 
     match(stream: Stream, registry: Map<string, Pattern>, precedence: number = 1, stack: Stack = new Stack(), cache: { [key: string]: Match } = {}): Match | null {
@@ -209,13 +212,14 @@ export class NamedPattern extends Pattern {
         const pattern = registry.get(this.name);
         if (!pattern || (pattern.precedence && pattern.precedence < precedence)) return cache[key] = null;
         const match = pattern.match(stream, registry, pattern.precedence || pattern.preservePrecedence ? pattern.precedence ?? precedence : 1, stack, cache);
+        if (this.unmatched) return cache[key] = match;
         if (!match) return cache[key] = null;
         return cache[key] = { name: this.name, start, end: stream.location, children: [match] };
     }
 }
 
 function isSpecialCharacter(ch: string) {
-    return ch === "%" || ch === "|" || ch === "(" || ch === ")" || ch === "+" || ch === "?";
+    return ch === "%" || ch === "|" || ch === "(" || ch === ")" || ch === "+" || ch === "?" || ch === ".";
 }
 
 function parsePattern(stream: Stream, precedence?: number, preservePrecedence: boolean = false): Pattern {
@@ -230,6 +234,11 @@ function parsePattern(stream: Stream, precedence?: number, preservePrecedence: b
                 stream.consume();
                 children.push(new RawPattern(ch));
             } else {
+                let unmatched = false;
+                if (stream.peekch() === "!") {
+                    unmatched = true;
+                    stream.consume();
+                }
                 let name = "";
                 while (Char.isLetter(ch = stream.peekch())) {
                     stream.consume();
@@ -238,7 +247,7 @@ function parsePattern(stream: Stream, precedence?: number, preservePrecedence: b
                 if (name === "d")
                     children.push(new DigitPattern());
                 else
-                    children.push(new NamedPattern(name));
+                    children.push(new NamedPattern(name, unmatched));
             }
         } else if (ch === "(")
             children.push(parsePattern(stream, precedence));

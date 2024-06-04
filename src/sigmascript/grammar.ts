@@ -1,7 +1,7 @@
 import { Grammar } from "../parser";
 
 export const grammar: Grammar = {
-    "number": "%d+",
+    "number": "%d+(%.%d+)?",
     "name": "[a-zA-Z_][a-zA-Z0-9_]+?",
     "string": "\"([^\"]|(\\\\)|(\\\"))+?\"",
     "bool": "(true)|(false)",
@@ -72,9 +72,11 @@ export const grammar: Grammar = {
     "callstat": "%call;",
     "print": "print %expr;",
     "statement": "%assign|%if|%while|%function|%return|%callstat|%print",
-    "body": "( %statement )+?",
+    "comment": "//[^\n]+?",
+    "comments": "( %!comment )+?",
+    "body": "( %!comments %statement %!comments )+?",
     "use": "use %name;",
-    "imports": "( %use )+?",
+    "imports": "( %use %!comments )+?",
     "lib": "lib %name;",
-    "root": "%lib? %imports %body"
+    "root": "%!comments %lib? %!comments %imports %body %!comments"
 };

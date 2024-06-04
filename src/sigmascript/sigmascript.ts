@@ -5,6 +5,7 @@ import { FnLib } from "./lib/fn";
 import { JSLib } from "./lib/js";
 import { RefLib } from "./lib/ref";
 import { StructLib } from "./lib/struct";
+import { MathLib } from "./lib/math";
 import { grammar } from "./grammar";
 
 export class Scope {
@@ -39,6 +40,7 @@ export class SigmaScript {
         this.addLib("js", new JSLib(this));
         this.addLib("ref", new RefLib(this));
         this.addLib("struct", new StructLib(this));
+        this.addLib("math", new MathLib(this));
     }
 
     private fnScope(scope: Scope, args: string[], params: string[]) {
@@ -78,25 +80,25 @@ export class SigmaScript {
             case "add": {
                 const a = this.evalExpr(expr.first, scope);
                 const b = this.evalExpr(expr.last, scope);
-                const result = Number.parseInt(a) + Number.parseInt(b);
+                const result = Number.parseFloat(a) + Number.parseFloat(b);
                 return Number.isNaN(result) ? "unknown" : `${result}`;
             }
             case "sub": {
                 const a = this.evalExpr(expr.first, scope);
                 const b = this.evalExpr(expr.last, scope);
-                const result = Number.parseInt(a) - Number.parseInt(b);
+                const result = Number.parseFloat(a) - Number.parseFloat(b);
                 return Number.isNaN(result) ? "unknown" : `${result}`;
             }
             case "mul": {
                 const a = this.evalExpr(expr.first, scope);
                 const b = this.evalExpr(expr.last, scope);
-                const result = Number.parseInt(a) * Number.parseInt(b);
+                const result = Number.parseFloat(a) * Number.parseFloat(b);
                 return Number.isNaN(result) ? "unknown" : `${result}`;
             }
             case "div": {
                 const a = this.evalExpr(expr.first, scope);
                 const b = this.evalExpr(expr.last, scope);
-                const result = ~~(Number.parseInt(a) / Number.parseInt(b));
+                const result = Number.parseFloat(a) / Number.parseFloat(b);
                 return Number.isNaN(result) ? "unknown" : `${result}`;
             }
             case "eq": {
@@ -105,26 +107,26 @@ export class SigmaScript {
                 return `${a === b}`;
             }
             case "lt": {
-                const a = Number.parseInt(this.evalExpr(expr.first, scope));
-                const b = Number.parseInt(this.evalExpr(expr.last, scope));
+                const a = Number.parseFloat(this.evalExpr(expr.first, scope));
+                const b = Number.parseFloat(this.evalExpr(expr.last, scope));
                 if (Number.isNaN(a) || Number.isNaN(b)) return "unknown";
                 return `${a < b}`;
             }
             case "gt": {
-                const a = Number.parseInt(this.evalExpr(expr.first, scope));
-                const b = Number.parseInt(this.evalExpr(expr.last, scope));
+                const a = Number.parseFloat(this.evalExpr(expr.first, scope));
+                const b = Number.parseFloat(this.evalExpr(expr.last, scope));
                 if (Number.isNaN(a) || Number.isNaN(b)) return "unknown";
                 return `${a > b}`;
             }
             case "le": {
-                const a = Number.parseInt(this.evalExpr(expr.first, scope));
-                const b = Number.parseInt(this.evalExpr(expr.last, scope));
+                const a = Number.parseFloat(this.evalExpr(expr.first, scope));
+                const b = Number.parseFloat(this.evalExpr(expr.last, scope));
                 if (Number.isNaN(a) || Number.isNaN(b)) return "unknown";
                 return `${a <= b}`;
             }
             case "ge": {
-                const a = Number.parseInt(this.evalExpr(expr.first, scope));
-                const b = Number.parseInt(this.evalExpr(expr.last, scope));
+                const a = Number.parseFloat(this.evalExpr(expr.first, scope));
+                const b = Number.parseFloat(this.evalExpr(expr.last, scope));
                 if (Number.isNaN(a) || Number.isNaN(b)) return "unknown";
                 return `${a >= b}`;
             }

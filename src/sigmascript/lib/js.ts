@@ -34,7 +34,7 @@ export class JSLib extends NativeLib {
         if (value === "unknown") return undefined;
         if (value === "false") return false;
         if (value === "true") return true;
-        const number = Number.parseInt(value);
+        const number = Number.parseFloat(value);
         if (!Number.isNaN(number)) return number;
         return value;
     }

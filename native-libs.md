@@ -32,7 +32,7 @@ class ExampleLib extends NativeLib {
 
 sigmaScript.addLib("example", new ExampleLib(sigmaScript));
 ```
-```
+```ss
 use example;
 
 showMessage(helloWorld);

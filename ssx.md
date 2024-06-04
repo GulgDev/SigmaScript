@@ -2,7 +2,7 @@
 SSX is a syntax extension for SigmaScript that lets you write HTML-like markup inside a SigmaScript file.
 To start using it add the SSX loader to your page (or replace the SS loader):
 ```html
-<script src="https://raw.githubusercontent.com/GulgDev/SigmaScript/dist/sigmascriptx.js"></script>
+<script src="https://cdn.jsdelivr.net/gh/GulgDev/SigmaScript@dist/sigmascriptx.js"></script>
 ```
 
 ## Basics
