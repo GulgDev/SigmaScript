@@ -21,7 +21,7 @@ class Task<T> {
     }
 
     private update() {
-        if (this.state !== "ready" || (this.index !== 0 && this.queue[this.index - 1].state === "done"))
+        if (this.state !== "ready" || (this.index !== 0 && this.queue[this.index - 1].state !== "done"))
             return;
         this.state = "done";
         this.callback(this.result);
