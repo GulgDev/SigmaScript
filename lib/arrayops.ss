@@ -77,3 +77,9 @@ fn array_concat(array1, array2) {
     foreach(array2, (elm) => array_add(new_array, elm));
     ret new_array;
 }
+
+fn array_clone(array) {
+    new_array = array();
+    foreach(array, (elm) => array_add(new_array, elm));
+    ret new_array;
+}
