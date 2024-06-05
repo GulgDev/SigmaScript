@@ -6,7 +6,7 @@ fn foreach(array, callback) {
     len = array_length(array);
     i = 0;
     while i < len {
-        callback(array_at(i), i);
+        callback(array_at(array, i), i);
         i = i + 1;
     }
 }
@@ -16,7 +16,7 @@ fn map(array, callback) {
     len = array_length(array);
     i = 0;
     while i < len {
-        array_add(new_array, callback(array_at(i), i));
+        array_add(new_array, callback(array_at(array, i), i));
         i = i + 1;
     }
 }
@@ -26,7 +26,7 @@ fn filter(array, callback) {
     len = array_length(array);
     i = 0;
     while i < len {
-        elm = array_at(i);
+        elm = array_at(array, i);
         if callback(elm, i) {
             array_add(new_array, elm);
         }
@@ -38,7 +38,7 @@ fn any(array, callback) {
     len = array_length(array);
     i = 0;
     while i < len {
-        if callback(array_at(i), i) {
+        if callback(array_at(array, i), i) {
             ret true;
         }
         i = i + 1;
@@ -50,7 +50,7 @@ fn all(array, callback) {
     len = array_length(array);
     i = 0;
     while i < len {
-        if !callback(array_at(i), i) {
+        if !callback(array_at(array, i), i) {
             ret false;
         }
         i = i + 1;
@@ -62,7 +62,7 @@ fn array_slice(array, start, end) {
     new_array = array();
     i = start;
     while i < end {
-        array_add(new_array, array_at(i));
+        array_add(new_array, array_at(array, i));
     }
     ret new_array;
 }
