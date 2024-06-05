@@ -30,6 +30,7 @@ jobs:
         git branch -f gh-pages HEAD
         git checkout gh-pages --
         cp -r demo dist
+        cp -r lib dist
         date > dist/date.txt
         git add --force dist
         git commit -m "Build"

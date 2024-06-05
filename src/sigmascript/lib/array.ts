@@ -10,6 +10,7 @@ export class ArrayLib extends NativeLib {
         array_add: ([ array, element ]) => this.add(array, element),
         array_remove: ([ array, index ]) => this.remove(array, index),
         array_at: ([ array, index ]) => this.at(array, index),
+        array_length: ([ array ]) => this.length(array),
         array_find: ([ array, element ]) => this.find(array, element)
     };
 
@@ -29,6 +30,12 @@ export class ArrayLib extends NativeLib {
 
     at(array: string, index: string) {
         return this.registry.get(array)?.at(Number.parseInt(index)) ?? "unknown";
+    }
+
+    length(array: string) {
+        const arr = this.registry.get(array);
+        if (arr == null) return "unknown";
+        return `${arr.length}`;
     }
 
     find(array: string, element: string) {
