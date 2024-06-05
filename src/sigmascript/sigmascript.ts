@@ -9,6 +9,9 @@ import { StructLib } from "./lib/struct";
 import { ArrayLib } from "./lib/array";
 import { MathLib } from "./lib/math";
 import { grammar } from "./grammar";
+import { initLoader } from "../loader";
+
+export const MIME_TYPE = "text/sigmascript";
 
 export class Scope {
     readonly variables: { [key: string]: string } = {};
@@ -221,35 +224,12 @@ export class SigmaScript {
         }
     }
 
-    private async loadScript(script: HTMLScriptElement) {
-        if (script.getAttribute("type") !== "text/sigmascript") return;
-        let source;
-        if (script.hasAttribute("src")) {
-            const response = await fetch(script.getAttribute("src"));
-            source = await response.text();
-        } else
-            source = script.innerText;
-        this.load(source);
-    }
-
     addLib(name: string, lib: Lib) {
         this.libs[name] = lib;
     }
 
     getLib<T extends Lib>(libClass: { new(...args: any): T }): T {
         return Object.values(this.libs).find((lib) => lib instanceof libClass) as T;
-    }
-    
-    initLoader() {
-        new MutationObserver((mutations) => {
-            for (const mutation of mutations)
-                if (mutation.type === "childList")
-                    for (const node of mutation.addedNodes)
-                        if (node instanceof HTMLScriptElement)
-                            this.loadScript(node);
-        }).observe(document, { childList: true, subtree: true });
-        for (const script of document.getElementsByTagName("script"))
-            this.loadScript(script);
     }
 
     protected newScope(parent?: Scope): Scope {
@@ -271,5 +251,9 @@ export class SigmaScript {
             this.addLib(lib.find("name").value, new SigmaScriptLib(this, program));
         else
             return this.execute(program);
+    }
+
+    initLoader() {
+        initLoader(MIME_TYPE, (source) => this.load(source));
     }
 }

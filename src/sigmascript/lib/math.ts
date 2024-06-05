@@ -22,6 +22,8 @@ export class MathLib extends NativeLib {
         acos: mathfn((x) => Math.acos(x)),
         atan: mathfn((y, x) => x == null ? Math.atan(y) : Math.atan2(y, x)),
         exp: mathfn((x) => Math.exp(x)),
+        rad: mathfn((deg) => deg * Math.PI / 180),
+        deg: mathfn((rad) => rad * 180 / Math.PI),
         random: () => `${Math.random()}`,
         randint: ([a, b]) => this.randint(a, b)
     };
