@@ -1,6 +1,7 @@
 import { NativeLib } from ".";
 import { Registry } from "../registry";
 import { SSFunction } from "../sigmascript";
+import { ArrayLib } from "./array";
 import { DOMLib } from "./dom";
 import { RefLib } from "./ref";
 import { StructLib } from "./struct";
@@ -29,6 +30,7 @@ export class JSLib extends NativeLib {
     toJS(value: string): any {
         if (value.startsWith("#js:")) return this.getObject(value);
         if (value.startsWith("#struct:")) return this.sigmaScript.getLib(StructLib).getStruct(value);
+        if (value.startsWith("#array:")) return this.sigmaScript.getLib(ArrayLib).getArray(value);
         if (value.startsWith("#dom:")) return this.sigmaScript.getLib(DOMLib).getElement(value);
         if (value.startsWith("#ref:")) return this.toJS(this.sigmaScript.getLib(RefLib).get(value));
         if (value === "unknown") return undefined;

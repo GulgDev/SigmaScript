@@ -43,4 +43,8 @@ export class ArrayLib extends NativeLib {
         if (index == null || index === -1) return "unknown";
         return `${index}`;
     }
+
+    getArray(array: string) {
+        return this.registry.get(array) ?? "unknown";
+    }
 }
