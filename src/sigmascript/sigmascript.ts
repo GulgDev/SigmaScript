@@ -84,6 +84,10 @@ export class SigmaScript {
                 return expr.value;
             case "string":
                 return this.parseString(expr.value);
+            case "neg": {
+                const result = -Number.parseFloat(this.evalExpr(expr.first, scope));
+                return Number.isNaN(result) ? "unknown" : `${result}`;
+            }
             case "add": {
                 const a = this.evalExpr(expr.first, scope);
                 const b = this.evalExpr(expr.last, scope);

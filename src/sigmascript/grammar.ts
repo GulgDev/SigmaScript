@@ -5,6 +5,7 @@ export const grammar: Grammar = {
     "name": "[a-zA-Z_][a-zA-Z0-9_]+?",
     "string": "\"([^\"]|(\\\\)|(\\\"))+?\"",
     "bool": "(true)|(false)",
+    "neg": "- %expr",
     "add": {
         pattern: "%expr %+ %expr",
         precedence: 5
@@ -59,7 +60,7 @@ export const grammar: Grammar = {
     "lambda": "%( %paramlist %) => ({ %body })|%expr",
     "parenthesisexpr": "%( %expr %)",
     "expr": {
-        pattern: "%parenthesisexpr|%number|%string|%bool|%name|%add|%sub|%mul|%div|%concat|%eq|%lt|%gt|%le|%ge|%or|%and|%not|%call|%lambda",
+        pattern: "%parenthesisexpr|%number|%string|%bool|%name|%neg|%add|%sub|%mul|%div|%concat|%eq|%lt|%gt|%le|%ge|%or|%and|%not|%call|%lambda",
         preservePrecedence: true
     },
     "assign": "%name = %expr;",
