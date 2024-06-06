@@ -124,7 +124,7 @@ Struct lib allows you to create and modify structures. Use `struct` to create a 
 Array lib allows you to create and modify arrays. Use `array` to create a new array. Use `array_add` and `array_remove` to add/remove elements of array. Use `array_at` to access elements of array. Use `array_set` to modify elements of array. Use `array_length` to get length of array. Use `array_find` to find index of specific element in array.
 
 #### Math
-Math lib allows you to use math functions. It supports `sqrt`, `sin`, `cos`, `tan`, `asin`, `acos`, `atan`, `exp`, `random`, `randint`.
+Math lib allows you to use math functions. It supports `abs`, `sign`, `sqrt`, `sin`, `cos`, `tan`, `asin`, `acos`, `atan`, `sinh`, `cosh`, `tanh`, `asinh`, `acosh`, `atanh`, `exp`, `random`, `randint`.
 
 #### Native libraries
 You can create your own JS libs and then use them in SS. See [this article](native-libs.md) to learn how to do it.
