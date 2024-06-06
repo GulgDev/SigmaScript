@@ -121,7 +121,7 @@ String lib allows you to manipulate strings. Use `string_at` to access character
 Struct lib allows you to create and modify structures. Use `struct` to create a new struct. Use `struct_get` and `struct_set` to get/set fields of a structure.
 
 #### Array
-Array lib allows you to create and modify arrays. Use `array` to create a new array. Use `array_add` and `array_remove` to add/remove elements of array. Use `array_at` to access elements of array. Use `array_length` to get length of array. Use `array_find` to find index of specific element in array.
+Array lib allows you to create and modify arrays. Use `array` to create a new array. Use `array_add` and `array_remove` to add/remove elements of array. Use `array_at` to access elements of array. Use `array_set` to modify elements of array. Use `array_length` to get length of array. Use `array_find` to find index of specific element in array.
 
 #### Math
 Math lib allows you to use math functions. It supports `sqrt`, `sin`, `cos`, `tan`, `asin`, `acos`, `atan`, `exp`, `random`, `randint`.

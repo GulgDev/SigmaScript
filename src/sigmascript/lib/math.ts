@@ -14,6 +14,8 @@ export class MathLib extends NativeLib {
         pi: `${Math.PI}`
     };
     readonly functions: Readonly<{ [key: string]: SSFunction }> = {
+        abs: mathfn((x) => Math.abs(x)),
+        sign: mathfn((x) => Math.sign(x)),
         sqrt: mathfn((x) => Math.sqrt(x)),
         sin: mathfn((x) => Math.sin(x)),
         cos: mathfn((x) => Math.cos(x)),
@@ -21,6 +23,12 @@ export class MathLib extends NativeLib {
         asin: mathfn((x) => Math.asin(x)),
         acos: mathfn((x) => Math.acos(x)),
         atan: mathfn((y, x) => x == null ? Math.atan(y) : Math.atan2(y, x)),
+        sinh: mathfn((x) => Math.sinh(x)),
+        cosh: mathfn((x) => Math.cosh(x)),
+        tanh: mathfn((x) => Math.tanh(x)),
+        asinh: mathfn((x) => Math.asinh(x)),
+        acosh: mathfn((x) => Math.acosh(x)),
+        atanh: mathfn((x) => Math.atanh(x)),
         exp: mathfn((x) => Math.exp(x)),
         rad: mathfn((deg) => deg * Math.PI / 180),
         deg: mathfn((rad) => rad * 180 / Math.PI),
