@@ -32,6 +32,9 @@ export class MathLib extends NativeLib {
         exp: mathfn((x) => Math.exp(x)),
         rad: mathfn((deg) => deg * Math.PI / 180),
         deg: mathfn((rad) => rad * 180 / Math.PI),
+        round: mathfn((x, n=1) => Math.round(x / n) * n),
+        floor: mathfn((x, n=1) => Math.floor(x / n) * n),
+        ceil: mathfn((x, n=1) => Math.ceil(x / n) * n),
         random: () => `${Math.random()}`,
         randint: ([a, b]) => this.randint(a, b)
     };
