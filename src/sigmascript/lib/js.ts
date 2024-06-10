@@ -1,8 +1,9 @@
 import { NativeLib } from ".";
 import { Registry } from "../registry";
-import { SSFunction } from "../sigmascript";
+import { SSFunction, Scope } from "../sigmascript";
 import { ArrayLib } from "./array";
 import { DOMLib } from "./dom";
+import { FnLib } from "./fn";
 import { RefLib } from "./ref";
 import { StructLib } from "./struct";
 
@@ -29,6 +30,11 @@ export class JSLib extends NativeLib {
     
     toJS(value: string): any {
         if (value.startsWith("#js:")) return this.getObject(value);
+        if (value.startsWith("#fn")) {
+            const fn = this.sigmaScript.getLib(FnLib).getFn(value);
+            return (...args: any[]) => this.toJS(fn(
+                args.map((arg) => this.toSS(arg)), new Scope()));
+        }
         if (value.startsWith("#struct:")) return this.sigmaScript.getLib(StructLib).getStruct(value);
         if (value.startsWith("#array:")) return this.sigmaScript.getLib(ArrayLib).getArray(value);
         if (value.startsWith("#dom:")) return this.sigmaScript.getLib(DOMLib).getElement(value);
@@ -54,19 +60,19 @@ export class JSLib extends NativeLib {
     }
 
     get(handle: string, property: string) {
-        const value = this.getObject(handle)?.[property];
+        const value = this.toJS(handle)?.[property];
         if (value == null) return "unknown";
         return this.toSS(value);
     }
 
     set(handle: string, property: string, value: string) {
-        const object = this.getObject(handle);
+        const object = this.toJS(handle);
         if (object != null) object[property] = this.toJS(value);
         return "unknown";
     }
 
     new(handle: string, args: string[]) {
-        const ctor = this.getObject(handle);
+        const ctor = this.toJS(handle);
         if (ctor == null) return "unknown";
         const value = new ctor(...args.map((arg) => this.toJS(arg)));
         if (value == null) return "unknown";
@@ -74,13 +80,13 @@ export class JSLib extends NativeLib {
     }
 
     call(handle: string, args: string[]) {
-        const value = this.getObject(handle)?.(...args.map((arg) => this.toJS(arg)));
+        const value = this.toJS(handle)?.(...args.map((arg) => this.toJS(arg)));
         if (value == null) return "unknown";
         return this.toSS(value);
     }
 
     callMethod(handle: string, method: string, args: string[]) {
-        const value = this.getObject(handle)?.[method]?.(...args.map((arg) => this.toJS(arg)));
+        const value = this.toJS(handle)?.[method]?.(...args.map((arg) => this.toJS(arg)));
         if (value == null) return "unknown";
         return this.toSS(value);
     }

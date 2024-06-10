@@ -14,8 +14,8 @@ export class FnLib extends NativeLib {
         return this.registry.add(fn);
     }
 
-    getFn(fn: string, scope: Scope) {
-        return this.registry.get(fn) ?? scope.functions[fn];
+    getFn(fn: string, scope?: Scope) {
+        return this.registry.get(fn) ?? scope?.functions[fn];
     }
 
     fn(name: string, scope: Scope) {
