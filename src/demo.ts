@@ -60,6 +60,14 @@ fn bar(callback) {
 
 bar(fn("foo"));
 `,
+    "string": `
+use string;
+
+str = string_format("Hello, %!", "world");
+print str;
+print string_length(str);
+print string_replace(str, "world", "banana");
+`,
     "struct": `
 use struct;
 
@@ -81,7 +89,14 @@ p2 = point_new(321, 123);
 
 print "p1: " @ point_str(p1);
 print "p2: " @ point_str(p2);
-`
+`,
+    "array": `
+use array;
+
+array = array(1, 2, 3, 4, 5);
+print array_at(array, 0);
+array_remove(array, 0);
+print array_at(array, 0);`
 };
 
 const sigmaScript = new SigmaScript();

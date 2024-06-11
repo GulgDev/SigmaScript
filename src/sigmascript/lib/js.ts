@@ -42,8 +42,7 @@ export class JSLib extends NativeLib {
         if (value === "unknown") return undefined;
         if (value === "false") return false;
         if (value === "true") return true;
-        const number = Number.parseFloat(value);
-        if (!Number.isNaN(number)) return number;
+        if (/^[0-9]+(\.[0-9]+)?$/.test(value)) return Number.parseFloat(value);
         return value;
     }
     
