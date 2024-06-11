@@ -88,7 +88,7 @@ print "lambda = " @ lambda;
 ```
 
 ### Libraries
-There's 7 default libs in SigmaScript: `js`, `dom`, `fn`, `ref`, `struct`, `array`, `math`. To use a lib in your program simply add `use` header:
+There's 7 default libs in SigmaScript: `js`, `dom`, `fn`, `ref`, `string`, `struct`, `array`, `math`. To use a lib in your program simply add `use` header:
 ```ss
 use js;
 
