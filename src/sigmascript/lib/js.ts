@@ -7,6 +7,8 @@ import { FnLib } from "./fn";
 import { RefLib } from "./ref";
 import { StructLib } from "./struct";
 
+const ssSymbol = Symbol("ss");
+
 export class JSLib extends NativeLib {
     private readonly registry = new Registry<any>("js");
 
@@ -29,24 +31,39 @@ export class JSLib extends NativeLib {
     }
     
     toJS(value: string): any {
-        if (value.startsWith("#js:")) return this.getObject(value);
-        if (value.startsWith("#fn")) {
-            const fn = this.sigmaScript.getLib(FnLib).getFn(value);
-            return (...args: any[]) => this.toJS(fn(
-                args.map((arg) => this.toSS(arg)), new Scope()));
-        }
-        if (value.startsWith("#struct:")) return this.sigmaScript.getLib(StructLib).getStruct(value);
-        if (value.startsWith("#array:")) return this.sigmaScript.getLib(ArrayLib).getArray(value);
-        if (value.startsWith("#dom:")) return this.sigmaScript.getLib(DOMLib).getElement(value);
         if (value.startsWith("#ref:")) return this.toJS(this.sigmaScript.getLib(RefLib).get(value));
         if (value === "unknown") return undefined;
         if (value === "false") return false;
         if (value === "true") return true;
         if (/^[0-9]+(\.[0-9]+)?$/.test(value)) return Number.parseFloat(value);
-        return value;
+        let object: any;
+        if (value.startsWith("#js:")) object = this.getObject(value);
+        else if (value.startsWith("#fn")) {
+            const fn = this.sigmaScript.getLib(FnLib).getFn(value);
+            if (!fn) return undefined;
+            object = (...args: any[]) => this.toJS(fn(
+                args.map((arg) => this.toSS(arg)), new Scope()));
+        }
+        else if (value.startsWith("#struct:")) {
+            const struct = this.sigmaScript.getLib(StructLib).getStruct(value);
+            if (!struct) return undefined;
+            object = {};
+            for (const key in struct) object[key] = this.toJS(struct[key]);
+        }
+        else if (value.startsWith("#array:")) {
+            const array = this.sigmaScript.getLib(ArrayLib).getArray(value);
+            if (!array) return undefined;
+            object = array.map((element) => this.toJS(element));
+        }
+        else if (value.startsWith("#dom:")) object = this.sigmaScript.getLib(DOMLib).getElement(value);
+        else return value;
+        Object.defineProperty(object, ssSymbol, { value, enumerable: false });
+        return object;
     }
     
     toSS(value: any): string {
+        const ssValue = value[ssSymbol];
+        if (ssValue !== undefined) return ssValue;
         if (typeof value === "string" || value instanceof String ||
             typeof value === "boolean" || value instanceof Boolean ||
             Number.isInteger(value)) return `${value}`;

@@ -54,6 +54,6 @@ export class ArrayLib extends NativeLib {
     }
 
     getArray(array: string) {
-        return this.registry.get(array) ?? "unknown";
+        return this.registry.get(array);
     }
 }
