@@ -1,5 +1,7 @@
+import { initLoader } from "../loader";
+import { BrowserRuntime } from "../runtimes/browser";
 import { NativeLib } from "./lib";
-import { SigmaScript } from "./sigmascript";
+import { MIME_TYPE, SigmaScript } from "./sigmascript";
 
 declare global {
     interface Window {
@@ -11,4 +13,5 @@ declare global {
 window.NativeLib = NativeLib;
 
 window.sigmaScript = new SigmaScript();
-window.sigmaScript.initLoader();
+BrowserRuntime.addLibraries(window.sigmaScript);
+initLoader(MIME_TYPE, (source) => window.sigmaScript.load(source));

@@ -17,6 +17,7 @@ export class MathLib extends NativeLib {
         abs: mathfn((x) => Math.abs(x)),
         sign: mathfn((x) => Math.sign(x)),
         sqrt: mathfn((x) => Math.sqrt(x)),
+        mod: mathfn((x, y) => x % y),
         sin: mathfn((x) => Math.sin(x)),
         cos: mathfn((x) => Math.cos(x)),
         tan: mathfn((x) => Math.tan(x)),

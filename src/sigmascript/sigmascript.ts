@@ -1,15 +1,8 @@
 import { ASTElement, Grammar, Parser, inherit } from "../parser";
 import { Lib, SigmaScriptLib } from "./lib";
-import { DOMLib } from "./lib/dom";
 import { FnLib } from "./lib/fn";
 import { JSLib } from "./lib/js";
-import { RefLib } from "./lib/ref";
-import { StringLib } from "./lib/string";
-import { StructLib } from "./lib/struct";
-import { ArrayLib } from "./lib/array";
-import { MathLib } from "./lib/math";
 import { grammar } from "./grammar";
-import { initLoader } from "../loader";
 
 export const MIME_TYPE = "text/sigmascript";
 
@@ -39,15 +32,6 @@ export class SigmaScript {
 
     constructor(mergeGrammar: Partial<Grammar> = {}) {
         this.parser = new Parser(inherit(grammar, mergeGrammar));
-
-        this.addLib("dom", new DOMLib(this));
-        this.addLib("fn", new FnLib(this));
-        this.addLib("js", new JSLib(this));
-        this.addLib("ref", new RefLib(this));
-        this.addLib("string", new StringLib(this));
-        this.addLib("struct", new StructLib(this));
-        this.addLib("array", new ArrayLib(this));
-        this.addLib("math", new MathLib(this));
     }
 
     private fnScope(scope: Scope, args: string[], params: string[]) {
@@ -255,9 +239,5 @@ export class SigmaScript {
             this.addLib(lib.find("name").value, new SigmaScriptLib(this, program));
         else
             return this.execute(program);
-    }
-
-    initLoader() {
-        initLoader(MIME_TYPE, (source) => this.load(source));
     }
 }

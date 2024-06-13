@@ -10,11 +10,8 @@ import { StructLib } from "./struct";
 const ssSymbol = Symbol("ss");
 
 export class JSLib extends NativeLib {
-    private readonly registry = new Registry<any>("js");
+    protected readonly registry = new Registry<any>("js");
 
-    readonly variables: Readonly<{ [key: string]: string }> = {
-        js_window: this.registry.add(window)
-    };
     readonly functions: Readonly<{ [key: string]: SSFunction }> = {
         js: ([ code ]) => this.js(code),
         js_get: ([ handle, property ]) => this.get(handle, property),
