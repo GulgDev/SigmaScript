@@ -72,36 +72,21 @@ In SigmaScript, functions, components and variables are different things. They a
 
 So instead, you could store reference to a function in a variable and then pass it as a callback. You can do this in two ways: using `fn` lib and using lambda functions.
 
-### Fn
-Call `fn` function with your function name as the only argument and it will return wrapped function (reference to the function in memory):
-```ss
-use fn;
-
-fn callback() {
-    print "Hello world!";
-}
-
-wrapped_callback = fn("callback");
-```
-But this solution is not so good for several reasons. First, you have to declare a function even if you don't need to have it as a function (only as callback/wrapped function). Second, it is unclear that you must wrap the function name in quotation marks. Third, it can lead to problems with scopes.
-
-You should stick to lambda functions unless you have a specific use case.
-
 ### Lambda
-Instead of using the `fn` method, you should use a more clear approach: lambda functions. Lambda functions are expressions that behave like wrapped functions. They can be defined using `=>` syntax:
+Instead of using the `fn` method, you should use a more clear approach: lambda functions. Lambda functions are expressions that can be stored in variables and passed as arguments. They can be defined using `=>` syntax:
 ```ss
-wrapped_callback = () => {
+lambda = () => {
     print "Hello world!";
 };
 ```
 
-To call a wrapped function simply use `call`:
+To call a lambda function simply use `call`:
 ```ss
 use fn;
 
 // ...
 
-call(wrapped_callback);
+call(lambda);
 ```
 
 ## Tips

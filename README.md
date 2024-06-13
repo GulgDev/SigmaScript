@@ -65,10 +65,10 @@ x = 10;
 x();
 print x;
 ```
-Thus, you can't use callbacks as functions can't be passed as arguments to other functions. But you can use the `fn` lib or lambda functions.
+Thus, you can't use callbacks as functions can't be passed as arguments to other functions. But you can use lambda functions.
 
 ### Lambda functions
-Lambda functions are function expressions that behave like wrapped functions:
+Lambda functions are function expressions that can be stored in variables and passed as arguments:
 ```ss
 use fn;
 
@@ -109,7 +109,7 @@ JS lib allows you to access JavaScript functions and objects from SigmaScript. U
 DOM lib allows you to manipulate the DOM. Use `dom_title` to change the title of the page. Use `dom_create` to create a new element. Use `dom_find` to query an element by selector. Use `dom_append` to append a child to an element. Use `dom_remove` to remove an element. Use `dom_add_class`, `dom_remove_class`, `dom_toggle_class` to change element classes. Use `dom_set_text` or `dom_set_html` to change the contents of an element. Use `dom_get_attr` and `dom_set_attr` to change attributes of an element. Use `dom_css` to change CSS properties of an element. There are `dom_body` and `dom_head` to quickly access document body and head.
 
 #### Fn
-Fn lib allows you to create callbacks. Use `fn` to create a callback from function with given name. Use `call` to call wrapped function.
+Fn lib allows you to call lambda functions using `call`.
 
 #### Ref
 Ref lib allows you to create references to objects. Use `ref` to create a reference. Use `ref_get` and `ref_set` to get/set the current value of reference.

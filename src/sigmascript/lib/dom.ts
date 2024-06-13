@@ -21,10 +21,10 @@ export class DOMLib extends NativeLib {
         dom_toggle_class: ([ element, className ]) => this.toggleClass(element, className),
         dom_set_text: ([ element, text ]) => this.setText(element, text),
         dom_set_html: ([ element, html ]) => this.setHtml(element, html),
-        dom_set_attr: ([ element, attr, value ], scope) => this.setAttr(element, attr, value, scope),
+        dom_set_attr: ([ element, attr, value ]) => this.setAttr(element, attr, value),
         dom_get_attr: ([ element, attr ]) => this.getAttr(element, attr),
         dom_css: ([ element, prop, value ]) => this.css(element, prop, value),
-        dom_event: ([ element, event, callback ], scope) => this.event(element, event, callback, scope)
+        dom_event: ([ element, event, callback ]) => this.event(element, event, callback)
     };
     
     getElement(handle: string): Element {
@@ -86,8 +86,8 @@ export class DOMLib extends NativeLib {
         return "unknown";
     }
 
-    setAttr(element: string, attr: string, value: string, scope: Scope) {
-        if (attr.startsWith("on")) this.event(element, attr.slice(2), value, scope);
+    setAttr(element: string, attr: string, value: string) {
+        if (attr.startsWith("on")) this.event(element, attr.slice(2), value);
         else this.getElement(element)?.setAttribute(attr, value);
         return "unknown";
     }
@@ -102,10 +102,10 @@ export class DOMLib extends NativeLib {
         return "unknown";
     }
 
-    event(element: string, event: string, callback: string, scope: Scope) {
+    event(element: string, event: string, callback: string) {
         const elm = this.getElement(element);
-        const fn = this.sigmaScript.getLib(FnLib).getFn(callback, scope);
-        if (fn) elm.addEventListener(event, () => fn([], scope));
+        const fn = this.sigmaScript.getLib(FnLib).getFn(callback);
+        if (fn) elm.addEventListener(event, () => fn([]));
         return "unknown";
     }
 }

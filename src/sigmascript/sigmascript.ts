@@ -23,7 +23,7 @@ export class Scope {
     }
 };
 
-export type SSFunction = (args: string[], scope: Scope) => string;
+export type SSFunction = (args: string[]) => string;
 
 export class SigmaScript {
     private readonly parser: Parser;
@@ -147,7 +147,7 @@ export class SigmaScript {
                 const func = scope.functions[name];
                 if (!func) return "unknown";
                 const args = Array.from(expr.find("arglist")).map((arg) => this.evalExpr(arg, scope));
-                return func(args, scope);
+                return func(args);
             }
             case "lambda": {
                 const body = expr.findChild("body");

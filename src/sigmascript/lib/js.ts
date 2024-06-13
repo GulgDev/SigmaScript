@@ -39,7 +39,7 @@ export class JSLib extends NativeLib {
             const fn = this.sigmaScript.getLib(FnLib).getFn(value);
             if (!fn) return undefined;
             object = (...args: any[]) => this.toJS(fn(
-                args.map((arg) => this.toSS(arg)), new Scope()));
+                args.map((arg) => this.toSS(arg))));
         }
         else if (value.startsWith("#struct:")) {
             const struct = this.sigmaScript.getLib(StructLib).getStruct(value);
