@@ -35,7 +35,7 @@ export class JSLib extends NativeLib {
         if (value === "unknown") return undefined;
         if (value === "false") return false;
         if (value === "true") return true;
-        if (/^[0-9]+(\.[0-9]+)?$/.test(value)) return Number.parseFloat(value);
+        if (/^-?[0-9]+(\.[0-9]+)?$/.test(value)) return Number.parseFloat(value);
         let object: any;
         if (value.startsWith("#js:")) object = this.getObject(value);
         else if (value.startsWith("#fn")) {
