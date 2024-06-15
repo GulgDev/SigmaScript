@@ -11,20 +11,20 @@ export class DOMLib extends NativeLib {
         dom_body: this.registry.add(document.body)
     };
     readonly functions: Readonly<{ [key: string]: SSFunction }> = {
-        dom_title: ([ title ]) => this.title(title),
-        dom_create: ([ tagName ]) => this.create(tagName),
-        dom_find: ([ selector ]) => this.find(selector),
-        dom_append: ([ parent, child ]) => this.append(parent, child),
-        dom_remove: ([ element ]) => this.remove(element),
-        dom_add_class: ([ element, className ]) => this.addClass(element, className),
-        dom_remove_class: ([ element, className ]) => this.removeClass(element, className),
-        dom_toggle_class: ([ element, className ]) => this.toggleClass(element, className),
-        dom_set_text: ([ element, text ]) => this.setText(element, text),
-        dom_set_html: ([ element, html ]) => this.setHtml(element, html),
-        dom_set_attr: ([ element, attr, value ]) => this.setAttr(element, attr, value),
-        dom_get_attr: ([ element, attr ]) => this.getAttr(element, attr),
-        dom_css: ([ element, prop, value ]) => this.css(element, prop, value),
-        dom_event: ([ element, event, callback ]) => this.event(element, event, callback)
+        dom_title: (title) => this.title(title),
+        dom_create: (tagName) => this.create(tagName),
+        dom_find: (selector) => this.find(selector),
+        dom_append: (parent, child) => this.append(parent, child),
+        dom_remove: (element) => this.remove(element),
+        dom_add_class: (element, className) => this.addClass(element, className),
+        dom_remove_class: (element, className) => this.removeClass(element, className),
+        dom_toggle_class: (element, className) => this.toggleClass(element, className),
+        dom_set_text: (element, text) => this.setText(element, text),
+        dom_set_html: (element, html) => this.setHtml(element, html),
+        dom_set_attr: (element, attr, value) => this.setAttr(element, attr, value),
+        dom_get_attr: (element, attr) => this.getAttr(element, attr),
+        dom_css: (element, prop, value) => this.css(element, prop, value),
+        dom_event: (element, event, callback) => this.event(element, event, callback)
     };
     
     getElement(handle: string): Element {
@@ -105,7 +105,7 @@ export class DOMLib extends NativeLib {
     event(element: string, event: string, callback: string) {
         const elm = this.getElement(element);
         const fn = this.sigmaScript.getLib(FnLib).getFn(callback);
-        if (fn) elm.addEventListener(event, () => fn([]));
+        if (fn) elm.addEventListener(event, () => fn());
         return "unknown";
     }
 }

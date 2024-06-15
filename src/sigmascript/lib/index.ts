@@ -17,7 +17,7 @@ export class SigmaScriptLib implements Lib {
     }
 
     use(scope: Scope) {
-        (this.result ?? (this.result = this.sigmaScript.execute(this.program))).copyTo(scope);
+        this.sigmaScript.runtime.copyScope(this.result ?? (this.result = this.sigmaScript.execute(this.program)), scope);
     }
 }
 

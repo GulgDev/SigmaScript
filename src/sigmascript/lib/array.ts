@@ -6,13 +6,13 @@ export class ArrayLib extends NativeLib {
     private readonly registry = new Registry<string[]>("array");
 
     readonly functions: Readonly<{ [key: string]: SSFunction }> = {
-        array: (elements) => this.array(elements),
-        array_add: ([ array, element ]) => this.add(array, element),
-        array_remove: ([ array, index ]) => this.remove(array, index),
-        array_at: ([ array, index ]) => this.at(array, index),
-        array_set: ([ array, index, element ]) => this.set(array, index, element),
-        array_length: ([ array ]) => this.length(array),
-        array_find: ([ array, element ]) => this.find(array, element)
+        array: (...elements) => this.array(elements),
+        array_add: (array, element) => this.add(array, element),
+        array_remove: (array, index) => this.remove(array, index),
+        array_at: (array, index) => this.at(array, index),
+        array_set: (array, index, element) => this.set(array, index, element),
+        array_length: (array) => this.length(array),
+        array_find: (array, element) => this.find(array, element)
     };
 
     array(elements: string[]) {

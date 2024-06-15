@@ -13,14 +13,14 @@ export class JSLib extends NativeLib {
     protected readonly registry = new Registry<any>("js");
 
     readonly functions: Readonly<{ [key: string]: SSFunction }> = {
-        js: ([ code ]) => this.js(code),
-        js_get: ([ handle, property ]) => this.get(handle, property),
-        js_set: ([ handle, property, value ]) => this.set(handle, property, value),
-        js_new: ([ handle, ...args ]) => this.new(handle, args),
+        js: (code) => this.js(code),
+        js_get: (handle, property) => this.get(handle, property),
+        js_set: (handle, property, value) => this.set(handle, property, value),
+        js_new: (handle, ...args) => this.new(handle, args),
         js_object: () => this.toSS({}),
         js_array: () => this.toSS([]),
-        js_call: ([ handle, ...args ]) => this.call(handle, args),
-        js_call_method: ([ handle, method, ...args ]) => this.callMethod(handle, method, args)
+        js_call: (handle, ...args) => this.call(handle, args),
+        js_call_method: (handle, method, ...args) => this.callMethod(handle, method, args)
     };
     
     getObject(handle: string): any {
@@ -39,7 +39,7 @@ export class JSLib extends NativeLib {
             const fn = this.sigmaScript.getLib(FnLib).getFn(value);
             if (!fn) return undefined;
             object = (...args: any[]) => this.toJS(fn(
-                args.map((arg) => this.toSS(arg))));
+                ...args.map((arg) => this.toSS(arg))));
         }
         else if (value.startsWith("#struct:")) {
             const struct = this.sigmaScript.getLib(StructLib).getStruct(value);

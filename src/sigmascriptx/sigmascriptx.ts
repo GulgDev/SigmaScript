@@ -24,20 +24,8 @@ const htmlentities: { [key: string]: string } = {
     "gt": ">"
 };
 
-class SSXScope extends Scope {
-    readonly components: { [key: string]: (children: string, attrvals: { [key: string]: string }) => string } = {};
-
-    constructor(scope?: Scope) {
-        super(scope);
-        if (scope instanceof SSXScope)
-            this.components = { ...scope.components };
-    }
-
-    copyTo(scope: Scope) {
-        super.copyTo(scope);
-        if (scope instanceof SSXScope)
-            Object.assign(scope.components, this.components);
-    }
+interface SSXScope extends Scope {
+    readonly components: { [key: string]: (children: string, attrvals: { [key: string]: string }) => string };
 }
 
 export class SigmaScriptX extends SigmaScript {
@@ -47,7 +35,7 @@ export class SigmaScriptX extends SigmaScript {
         super(grammar);
     }
 
-    protected parseHTMLContent(htmlcontent: ASTElement, scope: SSXScope): string[] {
+    /*protected parseHTMLContent(htmlcontent: ASTElement, scope: SSXScope): string[] {
         const children: string[] = [];
         for (const child of htmlcontent) {
             let value;
@@ -126,9 +114,5 @@ export class SigmaScriptX extends SigmaScript {
             default:
                 return super.execStatement(statement, scope);
         }
-    }
-
-    protected newScope(parent?: Scope): SSXScope {
-        return new SSXScope(parent);
-    }
+    }*/
 }

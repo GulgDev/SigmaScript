@@ -2,7 +2,7 @@ import { NativeLib } from ".";
 import { SSFunction } from "../sigmascript";
 
 function mathfn(fn: (...args: number[]) => number) {
-    return (args: string[]) => {
+    return (...args: string[]) => {
         const result = fn(...args.map((n) => Number.parseFloat(n)));
         if (Number.isNaN(result)) return "unknown";
         return `${result}`;
@@ -37,7 +37,7 @@ export class MathLib extends NativeLib {
         floor: mathfn((x, n=1) => Math.floor(x / n) * n),
         ceil: mathfn((x, n=1) => Math.ceil(x / n) * n),
         random: () => `${Math.random()}`,
-        randint: ([a, b]) => this.randint(a, b)
+        randint: (a, b) => this.randint(a, b)
     };
 
     randint(a: string, b: string) {

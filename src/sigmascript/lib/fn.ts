@@ -6,7 +6,7 @@ export class FnLib extends NativeLib {
     private readonly registry = new Registry<SSFunction>("fn");
 
     readonly functions: Readonly<{ [key: string]: SSFunction }> = {
-        call: ([ fn, ...args ]) => this.call(fn, args)
+        call: (fn, ...args) => this.call(fn, args)
     };
 
     addFn(fn: SSFunction) {
@@ -18,6 +18,6 @@ export class FnLib extends NativeLib {
     }
 
     call(fn: string, args: string[]) {
-        return this.registry.get(fn)?.(args) ?? "unknown";
+        return this.registry.get(fn)?.(...args) ?? "unknown";
     }
 }

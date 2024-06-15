@@ -7,8 +7,8 @@ export class StructLib extends NativeLib {
 
     readonly functions: Readonly<{ [key: string]: SSFunction }> = {
         struct: () => this.struct(),
-        struct_set: ([ struct, name, value ]) => this.set(struct, name, value),
-        struct_get: ([ struct, name ]) => this.get(struct, name)
+        struct_set: (struct, name, value) => this.set(struct, name, value),
+        struct_get: (struct, name) => this.get(struct, name)
     };
 
     struct() {

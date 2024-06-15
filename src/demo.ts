@@ -106,7 +106,7 @@ const runButton = document.getElementById("run") as HTMLButtonElement;
 const demoSelect = document.getElementById("demo-select") as HTMLSelectElement;
 
 runButton.addEventListener("click", () => {
-    if (!sigmaScript.load(code.value))
+    //if (!sigmaScript.load(code.value))
         console.error("invalid syntax");
 });
 

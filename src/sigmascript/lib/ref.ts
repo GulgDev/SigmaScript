@@ -6,9 +6,9 @@ export class RefLib extends NativeLib {
     private readonly registry = new Registry<string>("ref");
 
     readonly functions: Readonly<{ [key: string]: SSFunction }> = {
-        ref: ([ initialValue ]) => this.ref(initialValue),
-        ref_set: ([ ref, value ]) => this.set(ref, value),
-        ref_get: ([ ref ]) => this.get(ref)
+        ref: (initialValue) => this.ref(initialValue),
+        ref_set: (ref, value) => this.set(ref, value),
+        ref_get: (ref) => this.get(ref)
     };
 
     ref(initialValue: string) {
