@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "build": "webpack --config webpack.prod.js",
-    "start": "webpack --watch --config webpack.dev.js"
+    "start": "webpack --watch --config webpack.dev.js",
+    "prepublishOnly": "npm run build"
   },
   "bin": "bin/sigmascript.js",
   "keywords": [],
