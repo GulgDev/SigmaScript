@@ -1,11 +1,10 @@
 import { initLoader } from "../loader";
-import { BrowserRuntime } from "../runtimes/browser";
+import { runtime } from "../sigmascript/runtime/ssx";
 import { NativeLib } from "../sigmascript/lib";
 import { MIME_TYPE } from "../sigmascript/sigmascript";
 import { SigmaScriptX } from "./sigmascriptx";
 
-window.NativeLib = NativeLib;
+globalThis.NativeLib = NativeLib;
 
-window.sigmaScript = new SigmaScriptX();
-BrowserRuntime.addLibraries(window.sigmaScript);
-initLoader(MIME_TYPE, (source) => window.sigmaScript.load(source));
+globalThis.sigmaScript = new SigmaScriptX(runtime);
+initLoader(MIME_TYPE, (source) => globalThis.sigmaScript.load(source));

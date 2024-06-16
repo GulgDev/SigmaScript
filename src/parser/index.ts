@@ -70,6 +70,8 @@ export class ASTElement {
 export class Parser {
     private readonly patterns: Map<string, Pattern> = new Map();
 
+    private readonly cache: { [key: string]: ASTElement | null } = {};
+
     constructor(grammar: Grammar) {
         for (const [name, definition] of Object.entries(grammar))
             if (typeof definition === "string")
@@ -79,6 +81,10 @@ export class Parser {
     }
 
     parse(buffer: string): ASTElement | null {
+        const cached = this.cache[buffer];
+        if (cached !== undefined)
+            return cached;
+
         function visit(current: Match, parent: ASTElement) {
             if (current.name) {
                 const newParent = new ASTElement(current.name, current.start, current.end, buffer.slice(current.start.offset, current.end.offset));

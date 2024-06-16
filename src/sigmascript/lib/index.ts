@@ -1,34 +1,34 @@
-import { SSFunction, Scope, SigmaScript } from "../sigmascript";
-import { ASTElement } from "../../parser";
+import { CompiledFunction, SSFunction, Scope } from "../sigmascript";
+import { SigmaScriptRuntime } from "../runtime";
 
 export interface Lib {
     use(scope: Scope): void;
 }
 
 export class SigmaScriptLib implements Lib {
-    private readonly sigmaScript: SigmaScript;
-    private readonly program: ASTElement;
+    private readonly runtime: SigmaScriptRuntime;
+    private readonly func: CompiledFunction;
 
     private result: Scope | null = null;
 
-    constructor(sigmaScript: SigmaScript, program: ASTElement) {
-        this.sigmaScript = sigmaScript;
-        this.program = program;
+    constructor(runtime: SigmaScriptRuntime, func: CompiledFunction) {
+        this.runtime = runtime;
+        this.func = func;
     }
 
     use(scope: Scope) {
-        this.sigmaScript.runtime.copyScope(this.result ?? (this.result = this.sigmaScript.execute(this.program)), scope);
+        this.runtime.copyScope(this.result ?? (this.result = this.func(this.runtime)), scope);
     }
 }
 
 export class NativeLib implements Lib {
-    protected readonly sigmaScript: SigmaScript;
+    protected readonly runtime: SigmaScriptRuntime;
 
     readonly variables: Readonly<{ [key: string]: string }> = {};
     readonly functions: Readonly<{ [key: string]: SSFunction }> = {};
 
-    constructor(sigmaScript: SigmaScript) {
-        this.sigmaScript = sigmaScript;
+    constructor(runtime: SigmaScriptRuntime) {
+        this.runtime = runtime;
     }
 
     use(scope: Scope) {

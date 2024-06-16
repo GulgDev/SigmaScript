@@ -1,7 +1,6 @@
 import { Scope, SigmaScript } from "../sigmascript/sigmascript";
 import { ASTElement, Grammar } from "../parser";
-import { Registry } from "../sigmascript/registry";
-import { DOMLib } from "../sigmascript/lib/dom";
+import { SigmaScriptXRuntime } from "./runtime";
 
 const grammar: Partial<Grammar> = {
     "htmlname": "[a-z0-9-]+",
@@ -24,43 +23,41 @@ const htmlentities: { [key: string]: string } = {
     "gt": ">"
 };
 
-interface SSXScope extends Scope {
-    readonly components: { [key: string]: (children: string, attrvals: { [key: string]: string }) => string };
+export interface SSXScope extends Scope {
+    readonly components: { [key: string]: (attrs: { [key: string]: string }, content: string) => string };
 }
 
 export class SigmaScriptX extends SigmaScript {
-    private readonly groupRegistry = new Registry<string[]>("ssxgroup");
-
-    constructor() {
-        super(grammar);
+    constructor(runtime: SigmaScriptXRuntime) {
+        super(runtime, grammar);
     }
 
-    /*protected parseHTMLContent(htmlcontent: ASTElement, scope: SSXScope): string[] {
+    protected compileHTMLContent(htmlcontent: ASTElement, depth: number): string {
         const children: string[] = [];
-        for (const child of htmlcontent) {
-            let value;
+        for (const child of htmlcontent)
             switch (child.name) {
                 case "htmltext":
-                    value = child.value;
+                    children.push(JSON.stringify(child.value));
                     break;
                 case "htmlentity":
-                    value = htmlentities[child.find("htmlname").value] ?? child.value;
+                    children.push(`"${htmlentities[child.find("htmlname").value] ?? child.value}"`);
                     break;
                 case "expr":
                 case "html":
-                    value = this.evalExpr(child, scope);
+                    children.push(this.compileExpr(child, depth));
                     break;
             }
-            const group = this.groupRegistry.get(value);
-            if (group)
-                children.push(...group);
-            else
-                children.push(value);
+        switch (children.length) {
+            case 0:
+                return `"unknown"`;
+            case 1:
+                return children[0];
+            default:
+                return `runtime.ssxGroup(${children.join(", ")})`;
         }
-        return children;
     }
 
-    protected evalExpr(expr: ASTElement, scope: SSXScope): string {
+    protected compileExpr(expr: ASTElement, depth: number): string {
         if (expr.name === "expr")
             expr = expr.first;
         switch (expr.name) {
@@ -68,51 +65,35 @@ export class SigmaScriptX extends SigmaScript {
                 expr = expr.first;
                 const isPaired = expr.name === "htmlpaired";
                 const tagName = expr.first.value;
-                if (isPaired && expr.last.value !== tagName) return "unknown";
-                const component = scope.components[tagName];
-                if (component) {
-                    const attrvals: { [key: string]: string } = {};
-                    for (const attr of expr.findChildren("htmlattr"))
-                        attrvals[attr.find("htmlname").value] = this.evalExpr(attr.find("htmlattrval").first, scope);
-                    return component(isPaired ? this.groupRegistry.add(this.parseHTMLContent(expr.find("htmlcontent"), scope)) : "unknown", attrvals);
-                } else {
-                    const domLib = this.getLib(DOMLib);
-                    const element = domLib.create(tagName);
-                    for (const attr of expr.findChildren("htmlattr"))
-                        domLib.setAttr(
-                            element,
-                            attr.find("htmlname").value,
-                            this.evalExpr(attr.find("htmlattrval").first, scope)
-                        );
-                    if (isPaired)
-                        for (const child of this.parseHTMLContent(expr.find("htmlcontent"), scope))
-                            domLib.append(element, child);
-                    return element;
-                }
+                if (isPaired && expr.last.value !== tagName) return `"unknown"`;
+                return `runtime.ssx(scope${depth}, "${tagName}", { ${
+                    expr.findChildren("htmlattr").map((attr) =>
+                        `"${attr.find("htmlname").value}": ${this.compileExpr(attr.find("htmlattrval").first, depth)}`
+                    ).join(", ")
+                } }, ${
+                    this.compileHTMLContent(expr.findChild("htmlcontent"), depth)
+                })`;
             }
             default:
-                return super.evalExpr(expr, scope);
+                return super.compileExpr(expr, depth);
         }
     }
 
-    protected execStatement(statement: ASTElement, scope: SSXScope): string {
+    protected compileStatement(statement: ASTElement, depth: number): string {
         switch (statement.name) {
             case "component": {
-                const body = statement.find("body");
                 const attrs: { [key: string]: string } = {};
                 for (const attr of statement.findChildren("htmlattr"))
-                    attrs[attr.find("htmlname").value] = this.evalExpr(attr.find("htmlattrval").first, scope);
-                scope.components[statement.find("htmlname").value] = (children: string, attrvals: { [key: string]: string }) => {
-                    const localScope = this.newScope(scope);
-                    localScope.variables.children = children;
-                    for (const attrname in attrs)
-                        localScope.variables[attrname] = attrvals[attrname] ?? attrs[attrname];
-                    return this.exec(body, localScope) ?? "unknown";
-                };
-                break;
+                    attrs[attr.find("htmlname").value] = this.compileExpr(attr.find("htmlattrval").first, depth);
+                return `scope${depth}.components["${statement.find("htmlname").value}"] = (attrs, children) => {\n${
+                    this.localScope(++depth)
+                }scope${depth}.variables.children = children;\n${
+                    Object.keys(attrs).map((attr) => `scope${depth}.variables.${attr} = attrs.${attr} ?? ${attrs[attr]};\n`).join("") +
+                    this.compileBody(statement.find("body"), depth)
+                }return "unknown";\n};`;
             }
             default:
-                return super.execStatement(statement, scope);
+                return super.compileStatement(statement, depth);
         }
-    }*/
+    }
 }

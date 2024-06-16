@@ -1,17 +1,9 @@
 import { initLoader } from "../loader";
-import { BrowserRuntime } from "../runtimes/browser";
 import { NativeLib } from "./lib";
 import { MIME_TYPE, SigmaScript } from "./sigmascript";
+import { runtime } from "./runtime/browser";
 
-declare global {
-    interface Window {
-        sigmaScript: SigmaScript;
-        NativeLib: typeof NativeLib;
-    }
-}
+globalThis.NativeLib = NativeLib;
 
-window.NativeLib = NativeLib;
-
-window.sigmaScript = new SigmaScript();
-BrowserRuntime.addLibraries(window.sigmaScript);
-initLoader(MIME_TYPE, (source) => window.sigmaScript.load(source));
+globalThis.sigmaScript = new SigmaScript(runtime);
+initLoader(MIME_TYPE, (source) => globalThis.sigmaScript.load(source));

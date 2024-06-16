@@ -1,3 +1,4 @@
+import { runtime } from "./sigmascript/runtime/browser";
 import { SigmaScript } from "./sigmascript/sigmascript";
 
 const demos: { [key: string]: string } = {
@@ -99,14 +100,14 @@ array_remove(array, 0);
 print array_at(array, 0);`
 };
 
-const sigmaScript = new SigmaScript();
+const sigmaScript = new SigmaScript(runtime);
 
 const code = document.getElementById("code") as HTMLTextAreaElement;
 const runButton = document.getElementById("run") as HTMLButtonElement;
 const demoSelect = document.getElementById("demo-select") as HTMLSelectElement;
 
 runButton.addEventListener("click", () => {
-    //if (!sigmaScript.load(code.value))
+    if (!sigmaScript.load(code.value))
         console.error("invalid syntax");
 });
 

@@ -1,5 +1,5 @@
 import { ASTElement, Grammar, Parser, inherit } from "../parser";
-import { Lib, SigmaScriptLib } from "./lib";
+import { SigmaScriptLib } from "./lib";
 import { grammar } from "./grammar";
 import { SigmaScriptRuntime } from "./runtime";
 
@@ -12,189 +12,19 @@ export interface Scope {
 
 export type SSFunction = (...args: string[]) => string;
 
+export type CompiledFunction = (runtime: SigmaScriptRuntime) => Scope;
+
 export class SigmaScript {
     private readonly parser: Parser;
 
-    readonly runtime = new SigmaScriptRuntime(this);
+    readonly runtime: SigmaScriptRuntime;
 
-    readonly libs: { [key: string]: Lib } = {};
-
-    constructor(mergeGrammar: Partial<Grammar> = {}) {
+    constructor(runtime: SigmaScriptRuntime, mergeGrammar: Partial<Grammar> = {}) {
+        this.runtime = runtime;
         this.parser = new Parser(inherit(grammar, mergeGrammar));
     }
 
-    /*private fnScope(scope: Scope, args: string[], params: string[]) {
-        const localScope = this.newScope(scope);
-        let i = 0;
-        for (const param of params) {
-            const arg = args[i];
-            if (!arg) break;
-            localScope.variables[param] = arg;
-            ++i;
-        }
-        return localScope;
-    }
-
-    protected parseImports(imports: ASTElement, scope: Scope) {
-        for (const use of imports)
-            this.libs[use.find("name").value]?.use(scope);
-    }
-
-    protected parseString(raw: string) {
-        return raw.slice(1, -1).replace(/\\\"/g, "\"").replace(/\\\\/g, "\\");
-    }
-
-    protected evalExpr(expr: ASTElement, scope: Scope): string {
-        if (expr.name === "expr")
-            expr = expr.first;
-        switch (expr.name) {
-            case "parenthesisexpr":
-                return this.evalExpr(expr.first, scope);
-            case "name":
-                return scope.variables[expr.value] ?? "unknown";
-            case "number":
-            case "bool":
-                return expr.value;
-            case "string":
-                return this.parseString(expr.value);
-            case "neg": {
-                const result = -Number.parseFloat(this.evalExpr(expr.first, scope));
-                return Number.isNaN(result) ? "unknown" : `${result}`;
-            }
-            case "add": {
-                const a = this.evalExpr(expr.first, scope);
-                const b = this.evalExpr(expr.last, scope);
-                const result = Number.parseFloat(a) + Number.parseFloat(b);
-                return Number.isNaN(result) ? "unknown" : `${result}`;
-            }
-            case "sub": {
-                const a = this.evalExpr(expr.first, scope);
-                const b = this.evalExpr(expr.last, scope);
-                const result = Number.parseFloat(a) - Number.parseFloat(b);
-                return Number.isNaN(result) ? "unknown" : `${result}`;
-            }
-            case "mul": {
-                const a = this.evalExpr(expr.first, scope);
-                const b = this.evalExpr(expr.last, scope);
-                const result = Number.parseFloat(a) * Number.parseFloat(b);
-                return Number.isNaN(result) ? "unknown" : `${result}`;
-            }
-            case "div": {
-                const a = this.evalExpr(expr.first, scope);
-                const b = this.evalExpr(expr.last, scope);
-                const result = Number.parseFloat(a) / Number.parseFloat(b);
-                return Number.isNaN(result) ? "unknown" : `${result}`;
-            }
-            case "eq": {
-                const a = this.evalExpr(expr.first, scope);
-                const b = this.evalExpr(expr.last, scope);
-                return `${a === b}`;
-            }
-            case "lt": {
-                const a = Number.parseFloat(this.evalExpr(expr.first, scope));
-                const b = Number.parseFloat(this.evalExpr(expr.last, scope));
-                if (Number.isNaN(a) || Number.isNaN(b)) return "unknown";
-                return `${a < b}`;
-            }
-            case "gt": {
-                const a = Number.parseFloat(this.evalExpr(expr.first, scope));
-                const b = Number.parseFloat(this.evalExpr(expr.last, scope));
-                if (Number.isNaN(a) || Number.isNaN(b)) return "unknown";
-                return `${a > b}`;
-            }
-            case "le": {
-                const a = Number.parseFloat(this.evalExpr(expr.first, scope));
-                const b = Number.parseFloat(this.evalExpr(expr.last, scope));
-                if (Number.isNaN(a) || Number.isNaN(b)) return "unknown";
-                return `${a <= b}`;
-            }
-            case "ge": {
-                const a = Number.parseFloat(this.evalExpr(expr.first, scope));
-                const b = Number.parseFloat(this.evalExpr(expr.last, scope));
-                if (Number.isNaN(a) || Number.isNaN(b)) return "unknown";
-                return `${a >= b}`;
-            }
-            case "or": {
-                const a = this.evalExpr(expr.first, scope);
-                const b = this.evalExpr(expr.last, scope);
-                return `${a === "true" || b === "true"}`;
-            }
-            case "and": {
-                const a = this.evalExpr(expr.first, scope);
-                const b = this.evalExpr(expr.last, scope);
-                return `${a === "true" && b === "true"}`;
-            }
-            case "not":
-                return `${this.evalExpr(expr.first, scope) === "true" ? "false" : "true"}`;
-            case "concat": {
-                const a = this.evalExpr(expr.first, scope);
-                const b = this.evalExpr(expr.last, scope);
-                return a + b;
-            }
-            case "call": {
-                const name = expr.find("name").value;
-                const func = scope.functions[name];
-                if (!func) return "unknown";
-                const args = Array.from(expr.find("arglist")).map((arg) => this.evalExpr(arg, scope));
-                return func(args);
-            }
-            case "lambda": {
-                const body = expr.findChild("body");
-                const retExpr = expr.findChild("expr");
-                const params = Array.from(expr.find("paramlist")).map((param) => param.value);
-                return this.getLib(FnLib).addFn((args: string[]) => {
-                    const localScope = this.fnScope(scope, args, params);
-                    return (body && this.exec(body, localScope)) ?? (retExpr && this.evalExpr(retExpr, localScope)) ?? "unknown";
-                });
-            }
-        }
-        return "unknown";
-    }
-
-    protected execStatement(statement: ASTElement, scope: Scope): string {
-        switch (statement.name) {
-            case "assign":
-                scope.variables[statement.find("name").value] = this.evalExpr(statement.find("expr"), scope);
-                break;
-            case "if": {
-                const condition = this.evalExpr(statement.find("expr"), scope);
-                let result;
-                if (condition === "true")
-                    result = this.exec(statement.find("body"), scope);
-                const elseStatement = statement.findChild("else");
-                if (elseStatement && condition === "false")
-                    result = this.exec(elseStatement.find("body"), scope);
-                if (result) return result;
-                break;
-            }
-            case "while": {
-                const expr = statement.find("expr");
-                const body = statement.find("body");
-                while (this.evalExpr(expr, scope) === "true") {
-                    const result = this.exec(body, scope);
-                    if (result) return result;
-                }
-                break;
-            }
-            case "function": {
-                const body = statement.find("body");
-                const params = Array.from(statement.find("paramlist")).map((param) => param.value);
-                scope.functions[statement.find("name").value] = (args: string[]) =>
-                    this.exec(body, this.fnScope(scope, args, params)) ?? "unknown";
-                break;
-            }
-            case "print":
-                console.log(this.getLib(JSLib).toJS(this.evalExpr(statement.find("expr"), scope)) ?? "unknown");
-                break;
-            case "callstat":
-                this.evalExpr(statement.first, scope);
-                break;
-            case "return":
-                return this.evalExpr(statement.find("expr"), scope);
-        }
-    }*/
-
-    private compileExpr(expr: ASTElement, depth: number): string {
+    protected compileExpr(expr: ASTElement, depth: number): string {
         if (expr.name === "expr")
             expr = expr.first;
         switch (expr.name) {
@@ -246,27 +76,27 @@ export class SigmaScript {
         }
     }
 
-    private compileCall(call: ASTElement, depth: number) {
+    protected compileCall(call: ASTElement, depth: number) {
         return `scope${depth}.functions.${call.find("name").value}?.(${
             Array.from(call.find("arglist")).map((arg) => this.compileExpr(arg, depth)).join(", ")
         })`;
     }
 
-    private compileFunction(fn: ASTElement, depth: number) {
+    protected compileFunction(fn: ASTElement, depth: number) {
         const params = Array.from(fn.find("paramlist"));
         return `(${
-            params.map((_, i) => `arg${i}`).join(", ")
+            params.map((_, i) => `arg${i}="unknown"`).join(", ")
         }) => {\n${
             this.localScope(++depth) +
             params.map((name, i) => `scope${depth}.variables.${name.value} = arg${i};\n`).join("") +
             this.compileBody(fn.find("body"), depth)
-        }}`;
+        }return "unknown";\n}`;
     }
 
-    private compileLambda(fn: ASTElement, depth: number) {
+    protected compileLambda(fn: ASTElement, depth: number) {
         const params = Array.from(fn.find("paramlist"));
         return `(${
-            params.map((_, i) => `arg${i}`).join(", ")
+            params.map((_, i) => `arg${i}="unknown"`).join(", ")
         }) => {\n${
             this.localScope(++depth) +
             params.map((name, i) => `scope${depth}.variables.${name.value} = arg${i};\n`).join("")
@@ -275,7 +105,7 @@ export class SigmaScript {
         };\n}`;
     }
 
-    private compileStatement(statement: ASTElement, depth: number): string {
+    protected compileStatement(statement: ASTElement, depth: number): string {
         switch (statement.name) {
             case "assign":
                 return `scope${depth}.variables.${statement.find("name").value} = ${this.compileExpr(statement.find("expr"), depth)};`;
@@ -292,7 +122,7 @@ export class SigmaScript {
             case "while": {
                 return `while ((${this.compileExpr(statement.find("expr"), depth)}) === "true") {\n${
                     this.compileBody(statement.find("body"), depth)
-                }}`;;
+                }}`;
             }
             case "function":
                 return `scope${depth}.functions.${statement.find("name").value} = ${this.compileFunction(statement, depth)};`;
@@ -305,7 +135,7 @@ export class SigmaScript {
         }
     }
 
-    private compileBody(body: ASTElement, depth: number = 0): string {
+    protected compileBody(body: ASTElement, depth: number = 0): string {
         let result = "";
         for (const { first: statement } of body) {
             result += this.compileStatement(statement, depth) + "\n";
@@ -314,14 +144,14 @@ export class SigmaScript {
     }
 
     protected localScope(depth: number): string {
-        return `const scope${depth} = { variables: { ...scope${depth - 1}.variables }, functions: { ...scope${depth - 1}.functions } };\n`;
+        return `const scope${depth} = runtime.scope(scope${depth - 1});\n`;
     }
 
     protected globalScope(): string {
         return "const scope0 = runtime.scope();\n";
     }
 
-    private compileImports(imports: ASTElement) {
+    protected compileImports(imports: ASTElement) {
         let result = "";
         for (const use of imports)
             result += `runtime.libs.${use.find("name").value}?.use(scope0);\n`;
@@ -336,16 +166,12 @@ export class SigmaScript {
         return result;
     }
 
-    addLib(name: string, lib: Lib) {
-        this.libs[name] = lib;
+    protected createFunction(program: ASTElement): CompiledFunction {
+        return Function("runtime", this.compileProgram(program)) as CompiledFunction;
     }
 
-    getLib<T extends Lib>(libClass: { new(...args: any): T }): T {
-        return Object.values(this.libs).find((lib) => lib instanceof libClass) as T;
-    }
-
-    execute(program: ASTElement): Scope {
-        return Function("runtime", this.compileProgram(program))(this.runtime);
+    getLibName(source: string) {
+        return this.parser.parse(source)?.findChild("lib")?.find("name")?.value;
     }
 
     compile(source: string) {
@@ -358,9 +184,10 @@ export class SigmaScript {
         const program = this.parser.parse(source);
         if (!program || program.end.offset !== source.length) return;
         const lib = program.findChild("lib");
+        const func = this.createFunction(program);
         if (lib)
-            this.addLib(lib.find("name").value, new SigmaScriptLib(this, program));
+            this.runtime.addLib(lib.find("name").value, new SigmaScriptLib(this.runtime, func));
         else
-            return this.execute(program);
+            return func(this.runtime);
     }
 }

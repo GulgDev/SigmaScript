@@ -154,6 +154,7 @@ And then:
 ```
 npx sigmascript lib1.ss lib2.ss main.ss
 ```
+See [this article](cli.md) for more info.
 
 ## More info
 Browse the source code if you want to know more about how this project works.

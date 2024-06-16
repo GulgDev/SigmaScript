@@ -104,7 +104,7 @@ export class DOMLib extends NativeLib {
 
     event(element: string, event: string, callback: string) {
         const elm = this.getElement(element);
-        const fn = this.sigmaScript.getLib(FnLib).getFn(callback);
+        const fn = this.runtime.getLib(FnLib).getFn(callback);
         if (fn) elm.addEventListener(event, () => fn());
         return "unknown";
     }

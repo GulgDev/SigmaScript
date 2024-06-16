@@ -1,12 +1,13 @@
 lib arrayops;
 
 use array;
+use fn;
 
 fn foreach(array, callback) {
     len = array_length(array);
     i = 0;
     while i < len {
-        callback(array_at(array, i), i);
+        call(callback, array_at(array, i), i);
         i = i + 1;
     }
 }
@@ -16,7 +17,7 @@ fn map(array, callback) {
     len = array_length(array);
     i = 0;
     while i < len {
-        array_add(new_array, callback(array_at(array, i), i));
+        array_add(new_array, call(callback, array_at(array, i), i));
         i = i + 1;
     }
 }
@@ -27,7 +28,7 @@ fn filter(array, callback) {
     i = 0;
     while i < len {
         elm = array_at(array, i);
-        if callback(elm, i) {
+        if call(callback, elm, i) {
             array_add(new_array, elm);
         }
         i = i + 1;
@@ -38,7 +39,7 @@ fn any(array, callback) {
     len = array_length(array);
     i = 0;
     while i < len {
-        if callback(array_at(array, i), i) {
+        if call(callback, array_at(array, i), i) {
             ret true;
         }
         i = i + 1;
@@ -50,7 +51,7 @@ fn all(array, callback) {
     len = array_length(array);
     i = 0;
     while i < len {
-        if !callback(array_at(array, i), i) {
+        if !call(callback, array_at(array, i), i) {
             ret false;
         }
         i = i + 1;

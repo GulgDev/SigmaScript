@@ -3,7 +3,7 @@ const { merge } = require("webpack-merge");
 const common = require("./webpack.common.js");
 const TerserPlugin = require("terser-webpack-plugin");
 
-const browserConfig = merge(common, {
+const ssConfig = merge(common, {
     mode: "production",
     module: {
         rules: [
@@ -16,7 +16,7 @@ const browserConfig = merge(common, {
     }
 });
 
-const nodeConfig = {
+const binConfig = {
     mode: "production",
     target: "node",
     entry: "./src/bin.ts",
@@ -54,4 +54,4 @@ const nodeConfig = {
     ]
 };
 
-module.exports = [nodeConfig, browserConfig];
+module.exports = [ssConfig, binConfig];
