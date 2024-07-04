@@ -3,6 +3,7 @@ import { JSLib } from "./js";
 
 export class NodeJSLib extends JSLib {
     readonly variables: Readonly<{ [key: string]: string }> = {
+        js_env: "node",
         js_global: this.registry.add(globalThis)
     };
 

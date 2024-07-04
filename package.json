@@ -1,6 +1,6 @@
 {
   "name": "sigmascript",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Programming language made for sigma males",
   "main": "index.js",
   "scripts": {

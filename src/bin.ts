@@ -40,7 +40,9 @@ argLoop: for (const arg of process.argv.slice(2)) {
                 continue argLoop;
             }
         console.error(`Invalid flag: '${flagName}' (${arg})`);
-    } else
+    } else if (isURL(arg))
+        paths.push(arg);
+    else
         paths.push(...await fg(arg, { dot: true }));
 }
 

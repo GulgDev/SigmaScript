@@ -3,7 +3,7 @@ lib promises;
 use fn;
 use js;
 
-_promise = js_get(js_window, "Promise");
+_promise = js_get(js_global, "Promise");
 
 fn promise(callback) {
     ret js_new(_promise, (resolve, reject) =>
