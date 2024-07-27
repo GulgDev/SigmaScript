@@ -57,7 +57,7 @@ export class JSLib extends NativeLib {
         if (value === "true") return true;
         if (/^-?[0-9]+(\.[0-9]+)?$/.test(value)) return Number.parseFloat(value);
         const object = this.toJSObject(value);
-        if (object instanceof Object) Object.defineProperty(object, ssSymbol, { value, enumerable: false });
+        if (object instanceof Object && !object[ssSymbol]) Object.defineProperty(object, ssSymbol, { value, enumerable: false });
         return object;
     }
     
