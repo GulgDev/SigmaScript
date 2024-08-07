@@ -64,10 +64,10 @@ export class JSLib extends NativeLib {
     toSS(value: any): string {
         const ssValue = value[ssSymbol];
         if (ssValue !== undefined) return ssValue;
+        if (value == null || Number.isNaN(value)) return "unknown";
         if (typeof value === "string" || value instanceof String ||
             typeof value === "boolean" || value instanceof Boolean ||
-            Number.isInteger(value)) return `${value}`;
-        if (value == null || Number.isNaN(value)) return "unknown";
+            typeof value === "number" || value instanceof Number) return `${value}`;
         return this.registry.add(value);
     }
 
